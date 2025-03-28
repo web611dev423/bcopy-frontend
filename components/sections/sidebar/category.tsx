@@ -5,9 +5,10 @@ interface CategoryProps {
   expandedCategories: string[];
   toggleCategory: (name: string) => void;
   onSelectProgram: (category: string, program: string) => void;
+  searchQuery: string;
 }
 
-const Category = ({ expandedCategories, toggleCategory, onSelectProgram }: CategoryProps) => {
+const Category = ({ expandedCategories, toggleCategory, onSelectProgram, searchQuery }: CategoryProps) => {
   return (
     <div className="flex-1 overflow-y-auto min-h-[400px]">
       <div className="p-4 space-y-2">
@@ -30,7 +31,7 @@ const Category = ({ expandedCategories, toggleCategory, onSelectProgram }: Categ
             </button>
             {expandedCategories.includes(category.name) && (
               <div className="ml-4 space-y-1">
-                {category.items.map((item) => (
+                {category.items.filter((item) => item.toLowerCase().includes(searchQuery.toLowerCase())).map((item) => (
                   <button
                     key={item}
                     className="w-full flex items-center p-2 hover:bg-gray-100 rounded-md text-sm group"

@@ -14,8 +14,8 @@ const CategorySidebar = ({ isSidebarOpen }: CategorySidebarProps) => {
       fixed xl:fixed inset-y-0 left-0 z-40 overflow-y-auto
       w-64 bg-white border-r border-gray-200
       transform transition-transform duration-300 ease-in-out 
-      top-20 xl:top-20
-      h-[calc(100vh-5rem)]
+      top-12 xl:top-12
+      h-[calc(100vh-3rem)]
       ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}
     `}>
       <div className="h-full flex flex-col overflow-auto">

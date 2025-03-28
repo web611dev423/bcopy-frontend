@@ -1,68 +1,99 @@
+export const HELLO_DEVELOPER = `I am Mark = <Web Developer>;
+In love with Coding = true;
+Constantly Committing (!);`
 export const CATEGORIES = [
-  {
-    name: "Basic Programs",
-    items: ["Hello World", "Variables", "Loops", "Conditionals"]
-  },
-  {
-    name: "Algorithms",
-    items: ["Bubble Sort", "Quick Sort", "Binary Search", "Linear Search"]
-  },
-  {
-    name: "Data Structures",
-    items: ["Arrays", "Linked Lists", "Stack", "Queue"]
+    {
+        name: "Basic Programs",
+        items: ["Hello World", "Variables", "Loops", "Conditionals"]
+    },
+    {
+        name: "Algorithms",
+        items: ["Bubble Sort", "Quick Sort", "Binary Search", "Linear Search"]
+    },
+    {
+        name: "Data Structures",
+        items: ["Arrays", "Linked Lists", "Stack", "Queue"]
+    }
+];
+export interface Contributor {
+    name: string;
+    contributions: string;
+    country: string;
   }
-];
+  
+  export interface Recruiter {
+    company: string;
+    openings: string;
+    country: string;
+  }
+  
+  export interface ProfileCardProps {
+    image?: string;
+    title: string;
+    subtitle: string;
+    country: string;
+  } 
+export const CONTRIBUTORS: Contributor[] = [
+    { name: "John Smith", contributions: "150 contributions", country: "US" },
+    { name: "Sarah Johnson", contributions: "120 contributions", country: "UK" },
+    { name: "Michael Chen", contributions: "200 contributions", country: "CA" },
+    { name: "Emma Wilson", contributions: "180 contributions", country: "AU" },
+    { name: "David Brown", contributions: "160 contributions", country: "US" },
+    { name: "Sophie Martin", contributions: "140 contributions", country: "Europe" },
+    { name: "James Wilson", contributions: "190 contributions", country: "UK" },
+    { name: "Lisa Anderson", contributions: "170 contributions", country: "CA" },
+    { name: "Thomas Lee", contributions: "130 contributions", country: "AU" },
+    { name: "Maria Garcia", contributions: "110 contributions", country: "Europe" },
+  ];
+  
+  export const RECRUITERS: Recruiter[] = [
+    { company: "TechCorp US", openings: "25 open positions", country: "US" },
+    { company: "Global Solutions UK", openings: "15 open positions", country: "UK" },
+    { company: "Innovation Labs CA", openings: "20 open positions", country: "CA" },
+    { company: "Digital Dynamics AU", openings: "18 open positions", country: "AU" },
+    { company: "Future Systems US", openings: "30 open positions", country: "US" },
+    { company: "European Tech Hub", openings: "22 open positions", country: "Europe" },
+    { company: "British Innovations", openings: "16 open positions", country: "UK" },
+    { company: "Canadian Tech Solutions", openings: "19 open positions", country: "CA" },
+    { company: "Australian Digital", openings: "17 open positions", country: "AU" },
+    { company: "EuroTech Solutions", openings: "21 open positions", country: "Europe" },
+  ]; 
 
-export const CONTRIBUTORS = [
-  { name: "Jane Smith", contributions: "1200+" },
-  { name: "Mike Johnson", contributions: "1100+" },
-  { name: "Sarah Wilson", contributions: "1000+" },
-  { name: "David Brown", contributions: "950+" },
-  { name: "Emily Davis", contributions: "900+" }
-];
-
-export const RECRUITERS = [
-  { company: "Meta", openings: "90+ hires" },
-  { company: "Amazon", openings: "85+ hires" },
-  { company: "Microsoft", openings: "80+ hires" },
-  { company: "Apple", openings: "75+ hires" },
-  { company: "Netflix", openings: "70+ hires" }
-];
 
 export const ARTICLES = [
-  "Senior Developer at Google",
-  "Frontend Dev at Meta",
-  "Backend Engineer at Amazon"
+    "Senior Developer at Google",
+    "Frontend Dev at Meta",
+    "Backend Engineer at Amazon"
 ];
 
 export const LANGUAGES = [
-  { id: "c", name: "Java", icon: "WandSparkles" },
-  { id: "python", name: "Python", icon: "WandSparkles" },
-  { id: "html", name: "HTML", icon: "WandSparkles" }
+    { id: "c", name: "Java", icon: "WandSparkles" },
+    { id: "python", name: "Python", icon: "WandSparkles" },
+    { id: "html", name: "HTML", icon: "WandSparkles" }
 ];
 type SampleCode = {
-  [key: string]: {
     [key: string]: {
-      java: string;
-      python: string;
-      html: string;
+        [key: string]: {
+            java: string;
+            python: string;
+            html: string;
+        };
     };
-  };
 }
 export const SAMPLE_CODES: SampleCode = {
-  "Basic Programs": {
-    "Hello World": {
-      java: `public class HelloWorld {
+    "Basic Programs": {
+        "Hello World": {
+            java: `public class HelloWorld {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
 }`,
-      python: `def main():
+            python: `def main():
     print("Hello, World!")
 
 if __name__ == "__main__":
     main()`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Hello World</title>
@@ -71,9 +102,9 @@ if __name__ == "__main__":
     <h1>Hello, World!</h1>
 </body>
 </html>`
-    },
-    "Variables": {
-      java: `public class Variables {
+        },
+        "Variables": {
+            java: `public class Variables {
     public static void main(String[] args) {
         int number = 42;
         String text = "Hello";
@@ -86,7 +117,7 @@ if __name__ == "__main__":
         System.out.println("Price: " + price);
     }
 }`,
-      python: `# Variable declarations
+            python: `# Variable declarations
 number = 42
 text = "Hello"
 is_true = True
@@ -96,7 +127,7 @@ print(f"Number: {number}")
 print(f"Text: {text}")
 print(f"Boolean: {is_true}")
 print(f"Price: {price}")`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Variables</title>
@@ -117,9 +148,9 @@ print(f"Price: {price}")`,
     </script>
 </body>
 </html>`
-    },
-    "Loops": {
-      java: `public class Loops {
+        },
+        "Loops": {
+            java: `public class Loops {
     public static void main(String[] args) {
         // For loop
         for(int i = 0; i < 5; i++) {
@@ -134,7 +165,7 @@ print(f"Price: {price}")`,
         }
     }
 }`,
-      python: `# For loop
+            python: `# For loop
 for i in range(5):
     print(f"Count: {i}")
 
@@ -143,7 +174,7 @@ j = 0
 while j < 5:
     print(f"While: {j}")
     j += 1`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Loops</title>
@@ -164,9 +195,9 @@ while j < 5:
     </script>
 </body>
 </html>`
-    },
-    "Conditionals": {
-      java: `public class Conditionals {
+        },
+        "Conditionals": {
+            java: `public class Conditionals {
     public static void main(String[] args) {
         int number = 42;
         
@@ -179,7 +210,7 @@ while j < 5:
         }
     }
 }`,
-      python: `number = 42
+            python: `number = 42
 
 if number > 50:
     print("Number is greater than 50")
@@ -187,7 +218,7 @@ elif number == 42:
     print("Number is 42")
 else:
     print("Number is less than 42")`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Conditionals</title>
@@ -206,11 +237,11 @@ else:
     </script>
 </body>
 </html>`
-    }
-  },
-  "Algorithms": {
-    "Bubble Sort": {
-      java: `public class BubbleSort {
+        }
+    },
+    "Algorithms": {
+        "Bubble Sort": {
+            java: `public class BubbleSort {
     public static void bubbleSort(int[] arr) {
         int n = arr.length;
         for(int i = 0; i < n-1; i++) {
@@ -224,14 +255,14 @@ else:
         }
     }
 }`,
-      python: `def bubble_sort(arr):
+            python: `def bubble_sort(arr):
     n = len(arr)
     for i in range(n):
         for j in range(0, n-i-1):
             if arr[j] > arr[j+1]:
                 arr[j], arr[j+1] = arr[j+1], arr[j]
     return arr`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Bubble Sort</title>
@@ -252,9 +283,9 @@ else:
     </script>
 </body>
 </html>`
-    },
-    "Quick Sort": {
-      java: `public class QuickSort {
+        },
+        "Quick Sort": {
+            java: `public class QuickSort {
     public static void quickSort(int[] arr, int low, int high) {
         if (low < high) {
             int pi = partition(arr, low, high);
@@ -283,7 +314,7 @@ else:
         return i + 1;
     }
 }`,
-      python: `def quick_sort(arr):
+            python: `def quick_sort(arr):
     if len(arr) <= 1:
         return arr
     
@@ -293,7 +324,7 @@ else:
     right = [x for x in arr if x > pivot]
     
     return quick_sort(left) + middle + quick_sort(right)`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Quick Sort</title>
@@ -313,9 +344,9 @@ else:
     </script>
 </body>
 </html>`
-    },
-    "Binary Search": {
-      java: `public class BinarySearch {
+        },
+        "Binary Search": {
+            java: `public class BinarySearch {
     public static int binarySearch(int[] arr, int target) {
         int left = 0;
         int right = arr.length - 1;
@@ -331,7 +362,7 @@ else:
         return -1;
     }
 }`,
-      python: `def binary_search(arr, target):
+            python: `def binary_search(arr, target):
     left, right = 0, len(arr) - 1
     
     while left <= right:
@@ -345,7 +376,7 @@ else:
             right = mid - 1
     
     return -1`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Binary Search</title>
@@ -369,9 +400,9 @@ else:
     </script>
 </body>
 </html>`
-    },
-    "Linear Search": {
-      java: `public class LinearSearch {
+        },
+        "Linear Search": {
+            java: `public class LinearSearch {
     public static int linearSearch(int[] arr, int target) {
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == target) {
@@ -381,12 +412,12 @@ else:
         return -1;
     }
 }`,
-      python: `def linear_search(arr, target):
+            python: `def linear_search(arr, target):
     for i in range(len(arr)):
         if arr[i] == target:
             return i
     return -1`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Linear Search</title>
@@ -404,11 +435,11 @@ else:
     </script>
 </body>
 </html>`
-    }
-  },
-  "Data Structures": {
-    "Linked Lists": {
-      java: `public class LinkedList {
+        }
+    },
+    "Data Structures": {
+        "Linked Lists": {
+            java: `public class LinkedList {
     class Node {
         int data;
         Node next;
@@ -435,7 +466,7 @@ else:
         current.next = newNode;
     }
 }`,
-      python: `class Node:
+            python: `class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
@@ -454,7 +485,7 @@ class LinkedList:
         while current.next:
             current = current.next
         current.next = new_node`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Linked List</title>
@@ -490,9 +521,9 @@ class LinkedList:
     </script>
 </body>
 </html>`
-    },
-    "Arrays": {
-      java: `public class ArrayOperations {
+        },
+        "Arrays": {
+            java: `public class ArrayOperations {
     public static void arrayOperations() {
         // Declaration and initialization
         int[] numbers = new int[5];
@@ -511,7 +542,7 @@ class LinkedList:
         }
     }
 }`,
-      python: `# Array operations in Python (using lists)
+            python: `# Array operations in Python (using lists)
 numbers = []  # Empty array
 initialized = [1, 2, 3, 4, 5]  # Initialized array
 
@@ -525,7 +556,7 @@ print(numbers[0])  # 10
 # Array traversal
 for num in initialized:
     print(num)`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Array Operations</title>
@@ -550,9 +581,9 @@ for num in initialized:
     </script>
 </body>
 </html>`
-    },
-    "Stack": {
-      java: `public class Stack {
+        },
+        "Stack": {
+            java: `public class Stack {
     private int maxSize;
     private int[] stackArray;
     private int top;
@@ -583,7 +614,7 @@ for num in initialized:
         throw new RuntimeException("Stack is empty");
     }
 }`,
-      python: `class Stack:
+            python: `class Stack:
     def __init__(self):
         self.items = []
     
@@ -602,7 +633,7 @@ for num in initialized:
     
     def is_empty(self):
         return len(self.items) == 0`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Stack Implementation</title>
@@ -639,9 +670,9 @@ for num in initialized:
     </script>
 </body>
 </html>`
-    },
-    "Queue": {
-      java: `public class Queue {
+        },
+        "Queue": {
+            java: `public class Queue {
     private int maxSize;
     private int[] queueArray;
     private int front;
@@ -678,7 +709,7 @@ for num in initialized:
         throw new RuntimeException("Queue is empty");
     }
 }`,
-      python: `class Queue:
+            python: `class Queue:
     def __init__(self):
         self.items = []
     
@@ -697,7 +728,7 @@ for num in initialized:
     
     def is_empty(self):
         return len(self.items) == 0`,
-      html: `<!DOCTYPE html>
+            html: `<!DOCTYPE html>
 <html>
 <head>
     <title>Queue Implementation</title>
@@ -734,6 +765,6 @@ for num in initialized:
     </script>
 </body>
 </html>`
+        }
     }
-  }
 }; 

@@ -1,13 +1,19 @@
-import { ProfileCardProps } from "@/types";
+interface ProfileCardProps {
+  image: string;
+  title: string;
+  subtitle: string;
+  country: string;
+}
 
-const ProfileCard = ({ image, title, subtitle }: ProfileCardProps) => {
+const ProfileCard = ({ image, title, subtitle, country }: ProfileCardProps) => {
   return (
-    <div className="flex-1 min-w-[120px] sm:min-w-[150px] bg-gray-50 p-2 rounded-lg">
+    <div className="w-[200px] flex-shrink-0 bg-gray-50 p-2 rounded-lg m-2">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-gray-200 rounded-full flex-shrink-0" />
         <div>
           <div className="text-sm font-medium truncate">{title}</div>
           <div className="text-xs text-gray-500">{subtitle}</div>
+          <div className="text-xs text-blue-600">{country}</div>
         </div>
       </div>
     </div>

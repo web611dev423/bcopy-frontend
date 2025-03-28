@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { CATEGORIES } from "@/constants";
@@ -23,19 +23,42 @@ const Sidebar = ({
   toggleCategory,
   onSelectProgram
 }: SidebarProps) => {
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  
   useEffect(() => {
     if (CATEGORIES.length > 0 && expandedCategories.length === 0) {
       toggleCategory(CATEGORIES[0].name);
     }
   }, []);
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    // If there's a search query, find and expand categories with matching programs
+    if (query.trim()) {
+      const matchingCategories = CATEGORIES.filter(category => 
+        category.items.some(item => 
+          item.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+      
+      // Expand all categories that have matching programs
+      matchingCategories.forEach(category => {
+        if (!expandedCategories.includes(category.name)) {
+          toggleCategory(category.name);
+        }
+      });
+    }
+  };
+
   return (
     <div className={`
       fixed xl:fixed inset-y-0 left-0 z-40 overflow-y-auto
       w-64 bg-white border-r border-gray-200
       transform transition-transform duration-300 ease-in-out 
-      top-20 xl:top-20
-      h-[calc(100vh-5rem)]
+      top-12 xl:top-12
+      h-[calc(100vh-3rem)]
       ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}
     `}>
       <div className="h-full flex flex-col overflow-auto">
@@ -46,7 +69,9 @@ const Sidebar = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               placeholder="Search programs..."
-              className="pl-10"
+              className="pl-10 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
         </div>
@@ -56,6 +81,7 @@ const Sidebar = ({
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
           onSelectProgram={onSelectProgram}
+          searchQuery={searchQuery}
         />
 
         {/* Bottom Section */}

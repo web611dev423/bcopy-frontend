@@ -12,7 +12,7 @@ interface ChatGPTCardProps {
 const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
 
   return (
-    <Card className="shadow-md h-full">
+    <Card className="shadow-md h-full flex flex-col">
       <div className="grid grid-cols-6 gap-2 sm:gap-4 bg-white p-2 border-b border-[#c8c8c8]">
         <div className="col-span-5 p-2">
           <div className="flex flex-inline">
@@ -37,7 +37,7 @@ const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
           placeholder="// Write your code here to convert..."
         />
       </CardContent>
-      <CardFooter className="bg-gray-100 flex flex-wrap justify-left px-2 py-2 gap-2 border-t border-[#c8c8c8]">
+      <CardFooter className="bg-gray-100 flex flex-wrap justify-start px-2 py-2 gap-2 border-t border-[#c8c8c8] h-full">
         {LANGUAGES.map((lang) => (
           <Button
             key={lang.id}

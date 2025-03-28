@@ -18,7 +18,7 @@ const CodeDialog = (props: any) => {
             <CardTitle className="text-base sm:text-lg">{props.title}</CardTitle>
           </CardHeader>
           <CardContent className="p-2">
-            <ScrollArea className="h-[40vh] sm:h-[50vh] lg:h-[60vh] w-full text-sm">
+            <ScrollArea className="h-[40vh] sm:h-[50vh] lg:h-[60vh] w-full text-md sm:text-lg">
               <Highlight theme={themes.oneLight} code={props.code} language={props.language}>
                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                   <pre className={className} style={{ ...style, background: 'transparent' }}>
@@ -36,10 +36,10 @@ const CodeDialog = (props: any) => {
             </ScrollArea>
           </CardContent>
           <CardFooter className="bg-white p-2 sm:p-4 border-t border-[#c8c8c8] flex justify-center space-x-2 sm:space-x-6 items-center rounded-lg">
-            <button className="text-gray-400 hover:text-gray-600"><Copy className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-            <button className="text-gray-400 hover:text-gray-600"><Share className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-            <button className="text-gray-400 hover:text-gray-600"><Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-            <button className="text-gray-400 hover:text-gray-600"><Flag className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-800 outline-none"><Copy className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-800 outline-none"><Share className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-800 outline-none"><Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+            <button className="text-gray-600 hover:text-gray-800 outline-none"><Flag className="h-4 w-4 sm:h-5 sm:w-5" /></button>
           </CardFooter>
         </Card>
       </DialogContent>
