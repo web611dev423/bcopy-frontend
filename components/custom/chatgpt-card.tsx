@@ -13,15 +13,15 @@ const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
 
   return (
     <Card className="shadow-md h-full flex flex-col">
-      <div className="grid grid-cols-6 gap-2 sm:gap-4 bg-white p-2 border-b border-[#c8c8c8]">
-        <div className="col-span-5 p-2">
+      <div className="grid grid-cols-12 bg-white p-2 border-b border-[#c8c8c8]">
+        <div className="col-span-11 p-2 flex flex-wrap">
           <div className="flex flex-inline">
             <Code className="h-5 w-5 sm:h-6 sm:w-6 mb-2" />
             <h2 className="text-base sm:text-lg font-bold">&nbsp;&nbsp;ChatGPT Code Converter</h2>
           </div>
-          <p className="text-xs sm:text-sm text-gray-600">Transform your code between programming languages</p>
+          <p className="text-xs sm:text-sm text-gray-600 ">Transform your code between programming languages</p>
         </div>
-        <div className="col-span-1 p-2 flex align-center justify-center">
+        <div className="col-span-1 flex align-center justify-center">
           <Button
             variant="outline"
             size="sm"

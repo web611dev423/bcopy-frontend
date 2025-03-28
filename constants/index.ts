@@ -1,6 +1,6 @@
-export const HELLO_DEVELOPER = `I am Mark = <Web Developer>;
-In love with Coding = true;
-Constantly Committing (!);`
+export const HELLO_DEVELOPER = `I am Mark = <web developer>;
+In love with coding = true;
+Constantly committing (!);`
 export const CATEGORIES = [
     {
         name: "Basic Programs",
@@ -19,20 +19,20 @@ export interface Contributor {
     name: string;
     contributions: string;
     country: string;
-  }
-  
-  export interface Recruiter {
+}
+
+export interface Recruiter {
     company: string;
     openings: string;
     country: string;
-  }
-  
-  export interface ProfileCardProps {
+}
+
+export interface ProfileCardProps {
     image?: string;
     title: string;
     subtitle: string;
     country: string;
-  } 
+}
 export const CONTRIBUTORS: Contributor[] = [
     { name: "John Smith", contributions: "150 contributions", country: "US" },
     { name: "Sarah Johnson", contributions: "120 contributions", country: "UK" },
@@ -44,9 +44,9 @@ export const CONTRIBUTORS: Contributor[] = [
     { name: "Lisa Anderson", contributions: "170 contributions", country: "CA" },
     { name: "Thomas Lee", contributions: "130 contributions", country: "AU" },
     { name: "Maria Garcia", contributions: "110 contributions", country: "Europe" },
-  ];
-  
-  export const RECRUITERS: Recruiter[] = [
+];
+
+export const RECRUITERS: Recruiter[] = [
     { company: "TechCorp US", openings: "25 open positions", country: "US" },
     { company: "Global Solutions UK", openings: "15 open positions", country: "UK" },
     { company: "Innovation Labs CA", openings: "20 open positions", country: "CA" },
@@ -57,7 +57,7 @@ export const CONTRIBUTORS: Contributor[] = [
     { company: "Canadian Tech Solutions", openings: "19 open positions", country: "CA" },
     { company: "Australian Digital", openings: "17 open positions", country: "AU" },
     { company: "EuroTech Solutions", openings: "21 open positions", country: "Europe" },
-  ]; 
+];
 
 
 export const ARTICLES = [

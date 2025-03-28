@@ -63,7 +63,7 @@ export default function Home() {
       />
       {/* Add overlay for mobile/tablet */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 xl:hidden"
           onClick={toggleSidebar}
         />
@@ -86,6 +86,7 @@ export default function Home() {
                 title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
+                isDashboard={selectedProgram.length > 0 ? false : true}
               />
               <CodeCard
                 code={selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].python : HELLO_DEVELOPER}
@@ -93,6 +94,7 @@ export default function Home() {
                 title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
+                isDashboard={selectedProgram.length > 0 ? false : true}
               />
               <CodeCard
                 code={selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].html : HELLO_DEVELOPER}
@@ -100,13 +102,14 @@ export default function Home() {
                 title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
+                isDashboard={selectedProgram.length > 0 ? false : true}
               />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 sm:gap-4">
               <div className="col-span-1 mb-4 sm:mb-0">
                 <ChatGPTCard language={selectedLanguage} clickFunc={setSelectedLanguage} showDialog={setShowDialog} />
               </div>
-              <div className="col-span-2 space-y-2 grid grid-rows-2">
+              <div className="col-span-2 space-y-2 grid grid-rows-2 justify-stretch">
                 <div className="w-full overflow-x-auto">
                   <Contributors contributors={CONTRIBUTORS} />
                 </div>
@@ -119,21 +122,21 @@ export default function Home() {
         </div>
       </div>
       <Footer />
-      
-        <CodeDialog
-          open={isOpen} onOpenChange={(open: boolean) => {
-            setIsOpen(open);
-            if (!open) {
-              setShowDialog(false);
-              setSelectedLanguage("");
-            }
-          }}
-          language={selectedLanguage}
-          code={selectedLanguage === "c" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER :
-            selectedLanguage === "python" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].python : HELLO_DEVELOPER :
-              selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].html : HELLO_DEVELOPER}  
-          title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
-        />
+
+      <CodeDialog
+        open={isOpen} onOpenChange={(open: boolean) => {
+          setIsOpen(open);
+          if (!open) {
+            setShowDialog(false);
+            setSelectedLanguage("");
+          }
+        }}
+        language={selectedLanguage}
+        code={selectedLanguage === "c" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER :
+          selectedLanguage === "python" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].python : HELLO_DEVELOPER :
+            selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].html : HELLO_DEVELOPER}
+        title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
+      />
     </div>
   );
 }
