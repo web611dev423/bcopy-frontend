@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useRef } from "react";
 import { HELLO_DEVELOPER } from "@/constants";
+
 interface CodeCardProps {
   code: string;
   language: string;
@@ -42,23 +43,35 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard }:
 
   return (
     <Card className={`h-full hover:cursor-pointer shadow-lg lounded-lg ${isDashboard ? "bg-[#1f1f2b]" : "bg-white"}`}>
-      <CardHeader className="p-4 border-b border-[#c8c8c8] flex justify-between items-center">
-        <CardTitle className={`${isDashboard ? "text-white" : "text-gray-500"} text-base text-md sm:text-2xl`}>{title}</CardTitle>
+      <CardHeader className="ps-2 pe-2 pt-0 pb-2 border-b border-[#c8c8c8] grid grid-cols-12 w-full">
+        <div className="col-span-3 pt-2 justify-start w-full items-top">
+          <span className={`${isDashboard ? "text-white" : "text-gray-500"}`}>{language.toString().slice(0, 1).toUpperCase() + language.toString().slice(1)}</span>
+        </div>
+        <div className="col-span-6 w-full pt-4 justify-center flex flex-wrap">
+          <CardTitle className={`${isDashboard ? "text-white" : "text-gray-500"} text-sm lg:text-2xl whitespace-nowrap overflow-hidden text-ellipsis`}>{title}</CardTitle>
+        </div>
+        <div className="col-span-3 flex flex-inline pt-2 justify-end w-full">
+          <div className="flex space-x-2">
+            <button className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+            <button className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+            <button className="w-3 h-3 rounded-full bg-[#27c93f]" />
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="p-2">
+      <CardContent className="p-2 font-display">
         <ScrollArea
           ref={scrollAreaRef}
-          className={`h-[200px] sm:h-[250px] lg:h-[300px] w-full p-4 ${isDashboard ? "text-lg sm:text-2xl" : "text-sm sm:text-md"}`}
+          className={`h-[200px] sm:h-[250px] lg:h-[300px] w-full p-4 ${isDashboard ? "text-[7rem] md:text-[9rem] lg:text-[11rem]" : "text-sm md:text-md"}`}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}>
           <Highlight theme={isDashboard == true ? themes.vsDark : themes.vsLight} code={code} language={language}>
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
               <pre className={className} style={{ ...style, background: 'transparent' }}>
                 {tokens.map((line, i) => (
-                  <div key={i} {...getLineProps({ line })}>
+                  <div key={i} {...getLineProps({ line })} className={isDashboard ? "flex" : ""}>
                     {isDashboard ? null : <span className="text-gray-500 mr-4">{i + 1}</span>}
                     {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token })} />
+                      <span key={key} {...getTokenProps({ token })} className={isDashboard ? "w-full text-center italic font-['Cookie']" : "w-full"} />
                     ))}
                   </div>
                 ))}
@@ -74,7 +87,7 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard }:
         <button className="text-gray-400 hover:text-gray-600 transition-colors"><Flag className="h-4 w-4 sm:h-5 sm:w-5" /></button>
         <button className="text-gray-400 hover:text-gray-600 transition-colors"><ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" /></button>
       </CardFooter>
-    </Card>
+    </Card >
   )
 }
 

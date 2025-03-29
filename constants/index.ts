@@ -1,6 +1,8 @@
-export const HELLO_DEVELOPER = `I am Mark = <web developer>;
-In love with coding = true;
-Constantly committing (!);`
+export const HELLO_DEVELOPER = {
+    java: "HOW",
+    python: "ARE",
+    html: "YOU"
+};
 export const CATEGORIES = [
     {
         name: "Basic Programs",
@@ -87,21 +89,21 @@ export const SAMPLE_CODES: SampleCode = {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
-}`,
+} `,
             python: `def main():
-    print("Hello, World!")
+print("Hello, World!")
 
 if __name__ == "__main__":
     main()`,
-            html: `<!DOCTYPE html>
-<html>
-<head>
-    <title>Hello World</title>
-</head>
-<body>
-    <h1>Hello, World!</h1>
-</body>
-</html>`
+            html: `< !DOCTYPE html >
+    <html>
+    <head>
+    <title>Hello World </title>
+        </head>
+        < body >
+        <h1>Hello, World! </h1>
+        </body>
+        </html>`
         },
         "Variables": {
             java: `public class Variables {
