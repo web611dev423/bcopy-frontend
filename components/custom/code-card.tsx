@@ -48,7 +48,7 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard }:
           <span className={`${isDashboard ? "text-white" : "text-gray-500"}`}>{language.toString().slice(0, 1).toUpperCase() + language.toString().slice(1)}</span>
         </div>
         <div className="col-span-6 w-full pt-4 justify-center flex flex-wrap">
-          <CardTitle className={`${isDashboard ? "text-white" : "text-gray-500"} text-sm lg:text-2xl whitespace-nowrap overflow-hidden text-ellipsis`}>{title}</CardTitle>
+          <CardTitle className={`${isDashboard ? "text-white" : "text-gray-500"} text-lg md:text-1xl lg:text-2xl whitespace-nowrap overflow-hidden text-ellipsis`}>{title}</CardTitle>
         </div>
         <div className="col-span-3 flex flex-inline pt-2 justify-end w-full">
           <div className="flex space-x-2">
@@ -64,7 +64,7 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard }:
           className={`h-[200px] sm:h-[250px] lg:h-[300px] w-full p-4 ${isDashboard ? "text-[7rem] md:text-[9rem] lg:text-[11rem]" : "text-sm md:text-md"}`}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}>
-          <Highlight theme={isDashboard == true ? themes.vsDark : themes.vsLight} code={code} language={language}>
+          <Highlight theme={isDashboard == true ? themes.vsDark : themes.vsLight} code={code} language={language == "java" ? "c" : language}>
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
               <pre className={className} style={{ ...style, background: 'transparent' }}>
                 {tokens.map((line, i) => (

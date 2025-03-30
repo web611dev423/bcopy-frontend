@@ -1,13 +1,17 @@
 import { Recruiter } from "@/constants";
 import ProfileCard from "../custom/profile-card";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+
 interface RecruitersProps {
   recruiters: Recruiter[];
 }
 
 const Recruiters = ({ recruiters }: RecruitersProps) => {
   const [selectedCountry, setSelectedCountry] = useState<string>("all");
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Get unique countries
   const countries = ["all", ...Array.from(new Set(recruiters.map(r => r.country)))];
@@ -16,6 +20,24 @@ const Recruiters = ({ recruiters }: RecruitersProps) => {
   const filteredRecruiters = selectedCountry === "all"
     ? recruiters
     : recruiters.filter(r => r.country === selectedCountry);
+
+  // Update drag constraints when filtered recruiters change or on resize
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (containerRef.current && scrollRef.current) {
+        const containerWidth = scrollRef.current.scrollWidth;
+        const viewportWidth = containerRef.current.offsetWidth;
+        setDragConstraints({
+          left: -(Math.max(0, containerWidth - viewportWidth)),
+          right: 0
+        });
+      }
+    };
+
+    updateConstraints();
+    window.addEventListener('resize', updateConstraints);
+    return () => window.removeEventListener('resize', updateConstraints);
+  }, [filteredRecruiters]);
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-md w-full">
@@ -33,16 +55,22 @@ const Recruiters = ({ recruiters }: RecruitersProps) => {
           ))}
         </select>
       </div>
-      <div className="relative w-full overflow-hidden">
-        <motion.div drag="x" dragConstraints={{ left: -500, right: 0 }} // Adjust based on content width
+      <div ref={containerRef} className="relative w-full overflow-hidden">
+        <motion.div
+          drag="x"
+          dragConstraints={dragConstraints}
+          dragElastic={0}
+          dragMomentum={false}
           className="flex space-x-4 cursor-grab active:cursor-grabbing">
-          <div className="flex gap-2 min-w-max">
+          <div ref={scrollRef} className="flex gap-2 min-w-max">
             {filteredRecruiters.map((recruiter) => (
               <ProfileCard
                 key={recruiter.company}
                 title={recruiter.company}
                 subtitle={recruiter.openings}
-                country={recruiter.country} image={""} />
+                country={recruiter.country}
+                image={""}
+              />
             ))}
           </div>
         </motion.div>

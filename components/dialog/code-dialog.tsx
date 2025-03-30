@@ -15,11 +15,11 @@ const CodeDialog = (props: any) => {
         <DialogDescription className="hidden"></DialogDescription>
         <Card className="bg-white border-[#c8c8c8] w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] max-w-[1200px]">
           <CardHeader className="p-4 border-b border-[#c8c8c8] flex justify-between items-center">
-            <CardTitle className="text-base sm:text-lg">{props.title}</CardTitle>
+            <CardTitle className="text-lg md:text-1xl lg:text-2xl whitespace-nowrap overflow-hidden text-ellipsis">{props.title}</CardTitle>
           </CardHeader>
           <CardContent className="p-2">
             <ScrollArea className="h-[40vh] sm:h-[50vh] lg:h-[60vh] w-full text-md sm:text-lg">
-              <Highlight theme={themes.oneLight} code={props.code} language={props.language}>
+              <Highlight theme={themes.oneLight} code={props.code} language={props.language == "java" ? "c" : props.language}>
                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                   <pre className={className} style={{ ...style, background: 'transparent' }}>
                     {tokens.map((line, i) => (

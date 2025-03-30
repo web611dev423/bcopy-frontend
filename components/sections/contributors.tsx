@@ -1,6 +1,6 @@
 import { Contributor } from "@/constants";
 import ProfileCard from "../custom/profile-card";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface ContributorsProps {
@@ -9,6 +9,9 @@ interface ContributorsProps {
 
 const Contributors = ({ contributors }: ContributorsProps) => {
   const [selectedCountry, setSelectedCountry] = useState<string>("all");
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Get unique countries
   const countries = ["all", ...Array.from(new Set(contributors.map(c => c.country)))];
@@ -17,6 +20,24 @@ const Contributors = ({ contributors }: ContributorsProps) => {
   const filteredContributors = selectedCountry === "all"
     ? contributors
     : contributors.filter(c => c.country === selectedCountry);
+
+  // Update drag constraints when filtered contributors change or on resize
+  useEffect(() => {
+    const updateConstraints = () => {
+      if (containerRef.current && scrollRef.current) {
+        const containerWidth = scrollRef.current.scrollWidth;
+        const viewportWidth = containerRef.current.offsetWidth;
+        setDragConstraints({
+          left: -(Math.max(0, containerWidth - viewportWidth)),
+          right: 0
+        });
+      }
+    };
+
+    updateConstraints();
+    window.addEventListener('resize', updateConstraints);
+    return () => window.removeEventListener('resize', updateConstraints);
+  }, [filteredContributors]);
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-md w-full">
@@ -34,16 +55,22 @@ const Contributors = ({ contributors }: ContributorsProps) => {
           ))}
         </select>
       </div>
-      <div className="relative w-full overflow-hidden">
-        <motion.div drag="x" dragConstraints={{ left: -500, right: 0 }} // Adjust based on content width
+      <div ref={containerRef} className="relative w-full overflow-hidden">
+        <motion.div
+          drag="x"
+          dragConstraints={dragConstraints}
+          dragElastic={0}
+          dragMomentum={false}
           className="flex space-x-4 cursor-grab active:cursor-grabbing">
-          <div className="flex gap-2 min-w-max">
+          <div ref={scrollRef} className="flex gap-2 min-w-max">
             {filteredContributors.map((contributor) => (
               <ProfileCard
                 key={contributor.name}
                 title={contributor.name}
                 subtitle={contributor.contributions}
-                country={contributor.country} image={""} />
+                country={contributor.country}
+                image={""}
+              />
             ))}
           </div>
         </motion.div>

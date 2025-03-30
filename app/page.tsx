@@ -82,7 +82,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               <CodeCard
                 code={selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER.java}
-                language="c"
+                language="java"
                 title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
@@ -132,7 +132,7 @@ export default function Home() {
           }
         }}
         language={selectedLanguage}
-        code={selectedLanguage === "c" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER.java :
+        code={selectedLanguage === "java" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER.java :
           selectedLanguage === "python" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].python : HELLO_DEVELOPER.python :
             selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].html : HELLO_DEVELOPER.html}
         title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
