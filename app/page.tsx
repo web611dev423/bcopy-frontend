@@ -9,23 +9,62 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
 import CodeDialog from "@/components/dialog/code-dialog";
+import FeedbackDialog from "@/components/dialog/feedback-dialog";
+import JobPostingDialog from "@/components/dialog/jobposting-dialog";
 
-import { CATEGORIES, CONTRIBUTORS, RECRUITERS, ARTICLES, LANGUAGES, SAMPLE_CODES, HELLO_DEVELOPER } from "@/constants";
+import { ARTICLES, LANGUAGES, HELLO_DEVELOPER } from "@/constants";
 import Sidebar from "@/components/layout/sidebar";
 
 import Recruiters from "@/components/sections/recruiters";
 import Contributors from "@/components/sections/contributors";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { fetchCategories } from "@/store/reducers/categorySlice";
+import { Fascinate } from "next/font/google";
+import { Program } from "@/types";
+import { copyProgram } from "@/store/reducers/programSlice";
+
 
 export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState("");
+  const dispatch = useAppDispatch();
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackType, setFeedbackType] = useState<"bug" | "suggestion">("bug");
+  const [showJobPosting, setShowJobPosting] = useState(false);
+
+  const handleFeedback = (type: "bug" | "suggestion") => {
+    setShowFeedback(true);
+    setFeedbackType(type);
+  }
+
+  const handleJobPosting = () => {
+    setShowJobPosting(true);
+  }
+
+  const categoriesState = useAppSelector((state) => state.categories);
+  const categories = categoriesState.items;
   const [expandedCategories, setExpandedCategories] = useState<string[]>(
-    CATEGORIES.length > 0 ? [CATEGORIES[0].name] : []
+    categories.length > 0 ? [categories[0].name] : []
   );
   const [showDialog, setShowDialog] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedProgram, setSelectedProgram] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState<Program>(
+    {
+      _id: "",
+      name: "",
+      code: {
+        java: "",
+        python: "",
+        html: ""
+      },
+    }
+  );
 
 
   useEffect(() => {
@@ -33,6 +72,20 @@ export default function Home() {
       setIsOpen(true);
     }
   }, [showDialog]);
+
+  const handleCopyCode = async (code: string) => {
+    if (selectedProgram.name === "") {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+    dispatch(copyProgram(selectedProgram._id));
+  }
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories(prev =>
@@ -46,13 +99,16 @@ export default function Home() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleProgramSelect = (category: string, program: string) => {
-    setSelectedCategory(category);
+  const handleProgramSelect = (program: Program) => {
     setSelectedProgram(program);
     // Close sidebar on mobile/tablet after selection
     if (window.innerWidth < 1280) { // xl breakpoint
       setIsSidebarOpen(false);
     }
+  };
+
+  const removeBackticks = (code: string) => {
+    return code.replace(/`/g, '');
   };
 
   return (
@@ -75,34 +131,53 @@ export default function Home() {
             expandedCategories={expandedCategories}
             toggleCategory={toggleCategory}
             onSelectProgram={handleProgramSelect}
+            onShowJobPosting={handleJobPosting}
           />
           <div
             className="flex-1 xl:ml-64 p-4 xl:p-6"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               <CodeCard
-                code={selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER.java}
+                code={selectedProgram.name === ""
+                  ? HELLO_DEVELOPER.java
+                  : removeBackticks(selectedProgram.code?.java)}
                 language="java"
-                title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
+                title={selectedProgram.name === ""
+                  ? "Hello Developer"
+                  : selectedProgram.name}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
-                isDashboard={selectedProgram.length > 0 ? false : true}
+                copyCode={() => handleCopyCode(selectedProgram.code?.java)}
+                isDashboard={selectedProgram.name === ""}
+                onShowFeedback={handleFeedback}
               />
               <CodeCard
-                code={selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].python : HELLO_DEVELOPER.python}
+                code={selectedProgram.name === ""
+                  ? HELLO_DEVELOPER.python
+                  : removeBackticks(selectedProgram.code?.python)}
                 language="python"
-                title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
+                title={selectedProgram.name === ""
+                  ? "Hello Developer"
+                  : selectedProgram.name}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
-                isDashboard={selectedProgram.length > 0 ? false : true}
+                copyCode={() => handleCopyCode(selectedProgram.code?.python)}
+                isDashboard={selectedProgram.name === ""}
+                onShowFeedback={handleFeedback}
               />
               <CodeCard
-                code={selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].html : HELLO_DEVELOPER.html}
+                code={selectedProgram.name === ""
+                  ? HELLO_DEVELOPER.html
+                  : removeBackticks(selectedProgram.code?.html)}
                 language="html"
-                title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
+                title={selectedProgram.name === ""
+                  ? "Hello Developer"
+                  : selectedProgram.name}
                 clickFunc={setSelectedLanguage}
                 showDialog={setShowDialog}
-                isDashboard={selectedProgram.length > 0 ? false : true}
+                copyCode={() => handleCopyCode(selectedProgram.code?.html)}
+                isDashboard={selectedProgram.name === ""}
+                onShowFeedback={handleFeedback}
               />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 sm:gap-4">
@@ -111,10 +186,10 @@ export default function Home() {
               </div>
               <div className="col-span-2 space-y-2 grid grid-rows-2 justify-stretch">
                 <div className="w-full overflow-x-auto">
-                  <Contributors contributors={CONTRIBUTORS} />
+                  <Contributors />
                 </div>
                 <div className="w-full overflow-x-auto">
-                  <Recruiters recruiters={RECRUITERS} />
+                  <Recruiters />
                 </div>
               </div>
             </div>
@@ -131,11 +206,25 @@ export default function Home() {
             setSelectedLanguage("");
           }
         }}
+        onShowFeedback={handleFeedback}
         language={selectedLanguage}
-        code={selectedLanguage === "java" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].java : HELLO_DEVELOPER.java :
-          selectedLanguage === "python" ? selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].python : HELLO_DEVELOPER.python :
-            selectedProgram.length > 0 ? SAMPLE_CODES[selectedCategory][selectedProgram].html : HELLO_DEVELOPER.html}
-        title={selectedProgram.length > 0 ? selectedProgram : "Hello Developer"}
+        code={selectedLanguage === "java" ? selectedProgram.name === "" ? HELLO_DEVELOPER.java : removeBackticks(selectedProgram.code?.java) :
+          selectedLanguage === "python" ? selectedProgram.name === "" ? HELLO_DEVELOPER.python : removeBackticks(selectedProgram.code?.python) :
+            selectedProgram.name === "" ? HELLO_DEVELOPER.html : removeBackticks(selectedProgram.code?.html)}
+        title={selectedProgram.name === "" ? "Hello Developer" : selectedProgram.name}
+        copyCode={() => handleCopyCode(selectedProgram.code?.[selectedLanguage as keyof typeof selectedProgram.code])}
+      />
+
+      <FeedbackDialog
+        type={feedbackType}
+        programId={selectedProgram._id}
+        open={showFeedback}
+        onOpenChange={setShowFeedback}
+      />
+
+      <JobPostingDialog
+        open={showJobPosting}
+        onOpenChange={setShowJobPosting}
       />
     </div>
   );

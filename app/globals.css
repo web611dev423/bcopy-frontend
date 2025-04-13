@@ -98,3 +98,34 @@
   font-display: swap;
   src: url(https://fonts.gstatic.com/s/italianno/v17/dg4n_p3sv6gCJkwzT6Rnjw.ttf) format('truetype');
 }
+
+.prism-code {
+  background-color: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #637777;
+  font-style: italic;
+}
+
+.token.function {
+  color: #82AAFF;
+}
+
+.token.keyword {
+  color: #c792ea;
+}
+
+.token.string {
+  color: #ecc48d;
+}
+
+.token.number {
+  color: #F78C6C;
+}

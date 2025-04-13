@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Search, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,24 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import CategorySidebar from "@/components/layout/category-sidebar";
 
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { fetchCategories } from "@/store/reducers/categorySlice";
+import { fetchPrograms } from "@/store/reducers/programSlice";
+
 export default function Categories() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
+  const categoriesState = useAppSelector((state) => state.categories);
+  const programsState = useAppSelector((state) => state.programs);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchPrograms());
+  }, [dispatch]);
+
+  const categories = categoriesState.items;
+  const programs = programsState.items;
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -24,23 +39,6 @@ export default function Categories() {
         : [...prev, categoryName]
     );
   };
-
-  const categories = [
-    { id: "B", name: "Basic Programs", description: "Fundamental programming concepts" },
-    { id: "A", name: "Algorithms", description: "Common algorithm implementations" },
-    { id: "D", name: "Data Structures", description: "Common data structure implementations" },
-  ];
-
-  const programs = [
-    { id: "H", name: "Hello World", description: "Basic hello world program" },
-    { id: "V", name: "Variables", description: "Variable declaration examples" },
-    { id: "B", name: "Bubble Sort", description: "Bubble sort implementation" },
-    { id: "L", name: "Linked List", description: "Linked list implementation" },
-    { id: "D1", name: "Dummy Program 1", description: "This is a dummy program..." },
-    { id: "D2", name: "Dummy Program 2", description: "This is a dummy program..." },
-    { id: "D3", name: "Dummy Program 3", description: "This is a dummy program..." },
-    { id: "D4", name: "Dummy Program 4", description: "This is a dummy program..." },
-  ];
 
   const handleProgramClick = (category: string, program: string) => {
     // Implementation of handleProgramClick 
@@ -58,7 +56,7 @@ export default function Categories() {
       />
       {/* Add overlay for mobile/tablet */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 xl:hidden"
           onClick={toggleSidebar}
         />
@@ -88,12 +86,12 @@ export default function Categories() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {categories.map((category) => (
                     <div
-                      key={category.id}
+                      key={category.name}
                       className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-semibold">
-                          {category.id}
+                          {category.name[0]}
                         </div>
                         <div>
                           <h3 className="font-semibold">{category.name}</h3>
@@ -121,12 +119,12 @@ export default function Categories() {
                   {programs.map((program) => (
                     <div
                       onClick={() => window.location.assign('/')}
-                      key={program.id}
+                      key={program.name}
                       className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-semibold">
-                          {program.id[0]}
+                          {program.name[0]}
                         </div>
                         <div>
                           <h3 className="font-semibold">{program.name}</h3>

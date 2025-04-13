@@ -1,16 +1,27 @@
 import { Code, WandSparkles, ExternalLink } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { LANGUAGES } from "@/constants";
-
+import { useState } from "react";
+import api from "@/lib/api";
 interface ChatGPTCardProps {
   language: string;
   clickFunc: (lang: string) => void;
   showDialog: (open: boolean) => void;
+
 }
 
 const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
-
+  const [code, setCode] = useState("");
+  const convertCode = async (language: String) => {
+    const prompt = `Please convert below code to ${language} code.
+      ${code}`;
+    try {
+      const response = await api.post('gpt/convertcode', prompt);
+      setCode(response.data.choices[0].message.content);
+    } catch (err: any) {
+      console.error(err.response?.data || err.message);
+    }
+  }
   return (
     <Card className="shadow-md h-full flex flex-col">
       <div className="grid grid-cols-12 bg-white p-2 border-b border-[#c8c8c8]">
@@ -35,20 +46,39 @@ const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
         <textarea
           className="w-full h-24 sm:h-32 bg-white p-2 text-sm font-mono outline-none overflow-auto size-fixed min-h-[150px] sm:min-h-[200px]"
           placeholder="// Write your code here to convert..."
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
         />
       </CardContent>
       <CardFooter className="bg-gray-100 flex flex-wrap justify-start px-2 py-2 gap-2 border-t border-[#c8c8c8] h-full">
-        {LANGUAGES.map((lang) => (
-          <Button
-            key={lang.id}
-            variant="outline"
-            size="sm"
-            className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
-            onClick={() => clickFunc(lang.id)}
-          >
-            <WandSparkles className="h-4 w-4 mr-1" /> {lang.name}
-          </Button>
-        ))}
+
+        <Button
+
+          variant="outline"
+          size="sm"
+          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
+          onClick={() => convertCode("java")}
+        >
+          <WandSparkles className="h-4 w-4 mr-1" /> {"Java"}
+        </Button>
+        <Button
+
+          variant="outline"
+          size="sm"
+          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
+          onClick={() => convertCode("python")}
+        >
+          <WandSparkles className="h-4 w-4 mr-1" /> {"Python"}
+        </Button>
+        <Button
+
+          variant="outline"
+          size="sm"
+          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
+          onClick={() => convertCode("html")}
+        >
+          <WandSparkles className="h-4 w-4 mr-1" /> {"HTML"}
+        </Button>
       </CardFooter>
     </Card>
   )

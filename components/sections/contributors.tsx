@@ -1,25 +1,31 @@
-import { Contributor } from "@/constants";
 import ProfileCard from "../custom/profile-card";
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
-interface ContributorsProps {
-  contributors: Contributor[];
-}
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { fetchContributors } from "@/store/reducers/contributorSlice";
 
-const Contributors = ({ contributors }: ContributorsProps) => {
+
+
+const Contributors = () => {
+  const dispatch = useAppDispatch();
+  const { items, loading, error } = useAppSelector((state) => state.contributors);
+
+  useEffect(() => {
+    dispatch(fetchContributors());
+  }, [dispatch]);
   const [selectedCountry, setSelectedCountry] = useState<string>("all");
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Get unique countries
-  const countries = ["all", ...Array.from(new Set(contributors.map(c => c.country)))];
+  const countries = ["all", ...Array.from(new Set(items.map(c => c.country)))];
 
   // Filter contributors based on selected country
   const filteredContributors = selectedCountry === "all"
-    ? contributors
-    : contributors.filter(c => c.country === selectedCountry);
+    ? items
+    : items.filter(c => c.country === selectedCountry);
 
   // Update drag constraints when filtered contributors change or on resize
   useEffect(() => {
@@ -65,9 +71,9 @@ const Contributors = ({ contributors }: ContributorsProps) => {
           <div ref={scrollRef} className="flex gap-2 min-w-max">
             {filteredContributors.map((contributor) => (
               <ProfileCard
-                key={contributor.name}
+                key={contributor._id}
                 title={contributor.name}
-                subtitle={contributor.contributions}
+                subtitle={contributor.contributions + " contributions"}
                 country={contributor.country}
                 image={""}
               />

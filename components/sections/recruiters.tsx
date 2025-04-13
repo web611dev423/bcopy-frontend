@@ -1,25 +1,28 @@
-import { Recruiter } from "@/constants";
 import ProfileCard from "../custom/profile-card";
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { fetchRecruiters } from "@/store/reducers/recruiterSlice";
 
 interface RecruitersProps {
-  recruiters: Recruiter[];
+  recruiters: any[];
 }
 
-const Recruiters = ({ recruiters }: RecruitersProps) => {
+const Recruiters = () => {
+  const dispatch = useAppDispatch();
+  const { items, loading, error } = useAppSelector((state) => state.recruiters);
   const [selectedCountry, setSelectedCountry] = useState<string>("all");
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Get unique countries
-  const countries = ["all", ...Array.from(new Set(recruiters.map(r => r.country)))];
+  const countries = ["all", ...Array.from(new Set(items.map(r => r.country)))];
 
   // Filter recruiters based on selected country
   const filteredRecruiters = selectedCountry === "all"
-    ? recruiters
-    : recruiters.filter(r => r.country === selectedCountry);
+    ? items
+    : items.filter(r => r.country === selectedCountry);
 
   // Update drag constraints when filtered recruiters change or on resize
   useEffect(() => {
@@ -39,6 +42,10 @@ const Recruiters = ({ recruiters }: RecruitersProps) => {
     return () => window.removeEventListener('resize', updateConstraints);
   }, [filteredRecruiters]);
 
+  useEffect(() => {
+    dispatch(fetchRecruiters());
+  }, [dispatch]);
+
   return (
     <div className="bg-white rounded-lg p-4 shadow-md w-full">
       <div className="flex justify-between items-center mb-4">
@@ -46,7 +53,7 @@ const Recruiters = ({ recruiters }: RecruitersProps) => {
         <select
           value={selectedCountry}
           onChange={(e) => setSelectedCountry(e.target.value)}
-          className="px-3 py-1 border rounded-md text-sm outline-none"
+          className="px-3 py-1  text-sm rounded-md border outline-none"
         >
           {countries.map(country => (
             <option key={country} value={country}>
@@ -65,9 +72,9 @@ const Recruiters = ({ recruiters }: RecruitersProps) => {
           <div ref={scrollRef} className="flex gap-2 min-w-max">
             {filteredRecruiters.map((recruiter) => (
               <ProfileCard
-                key={recruiter.company}
-                title={recruiter.company}
-                subtitle={recruiter.openings}
+                key={recruiter._id}
+                title={recruiter.companyName}
+                subtitle={recruiter.positions + " open positions"}
                 country={recruiter.country}
                 image={""}
               />

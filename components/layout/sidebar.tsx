@@ -3,46 +3,60 @@
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { CATEGORIES } from "@/constants";
+
 
 import Category from "@/components/sections/sidebar/category";
 import DailyQuiz from "@/components/sections/sidebar/daily-quiz";
 import Articles from "@/components/sections/sidebar/articles";
 import { Button } from "../ui/button";
 
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchCategories } from "@/store/reducers/categorySlice";
+import { fetchPrograms } from "@/store/reducers/programSlice";
+import { Program } from "@/types";
+
 interface SidebarProps {
   isSidebarOpen: boolean;
   expandedCategories: string[];
   toggleCategory: (name: string) => void;
-  onSelectProgram: (category: string, program: string) => void;
+  onSelectProgram: (program: Program) => void;
+  onShowJobPosting: () => void;
 }
 
 const Sidebar = ({
   isSidebarOpen,
   expandedCategories,
   toggleCategory,
-  onSelectProgram
+  onSelectProgram,
+  onShowJobPosting
 }: SidebarProps) => {
 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    if (CATEGORIES.length > 0 && expandedCategories.length === 0) {
-      toggleCategory(CATEGORIES[0].name);
+    dispatch(fetchCategories());
+  }, [dispatch]);
+  const categoriesState = useAppSelector((state) => state.categories);
+  const categories = categoriesState.items;
+  const programsState = useAppSelector((state) => state.programs);
+  const programs = programsState.items;
+  useEffect(() => {
+    if (categories.length > 0 && expandedCategories.length === 0) {
+      toggleCategory(categories[0].name);
     }
   }, []);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    
+
     // If there's a search query, find and expand categories with matching programs
     if (query.trim()) {
-      const matchingCategories = CATEGORIES.filter(category => 
-        category.items.some(item => 
-          item.toLowerCase().includes(query.toLowerCase())
+      const matchingCategories = categories.filter(category =>
+        programs.some(program =>
+          program.name.toLowerCase().includes(query.toLowerCase())
         )
       );
-      
+
       // Expand all categories that have matching programs
       matchingCategories.forEach(category => {
         if (!expandedCategories.includes(category.name)) {
@@ -95,7 +109,7 @@ const Sidebar = ({
             </Button>
           </div>
           <DailyQuiz />
-          <Articles />
+          <Articles onShowJobPosting={onShowJobPosting} />
         </div>
       </div>
     </div>
