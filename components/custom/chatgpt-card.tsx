@@ -13,8 +13,10 @@ interface ChatGPTCardProps {
 const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
   const [code, setCode] = useState("");
   const convertCode = async (language: String) => {
-    const prompt = `Please convert below code to ${language} code.
-      ${code}`;
+    const prompt = {
+      prompt: `Please convert below code to ${language} code.
+      ${code}`
+    };
     try {
       console.log(prompt);
       const response = await api.post('/api/gpt/convertcode', prompt);
