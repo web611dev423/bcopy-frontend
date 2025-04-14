@@ -9,6 +9,10 @@ interface CategorySidebarProps {
 }
 
 const CategorySidebar = ({ isSidebarOpen }: CategorySidebarProps) => {
+  const handleShowJobPosting = () => {
+    // Handle job posting display logic here
+    console.log("show job posting");
+  };
   return (
     <div className={`
       fixed xl:fixed inset-y-0 left-0 z-40 overflow-y-auto
@@ -30,7 +34,7 @@ const CategorySidebar = ({ isSidebarOpen }: CategorySidebarProps) => {
             </Button>
           </div>
           <DailyQuiz />
-          <Articles />
+          <Articles onShowJobPosting={handleShowJobPosting} />
         </div>
       </div>
     </div>
