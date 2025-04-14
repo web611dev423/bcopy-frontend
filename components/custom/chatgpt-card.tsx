@@ -17,7 +17,7 @@ const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
       ${code}`;
     try {
       console.log(prompt);
-      const response = await api.post('api/gpt/convertcode', prompt);
+      const response = await api.post('/api/gpt/convertcode', prompt);
       setCode(response.data.choices[0].message.content);
     } catch (err: any) {
       console.error(err.response?.data || err.message);
