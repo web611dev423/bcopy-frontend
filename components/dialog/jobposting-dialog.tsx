@@ -113,7 +113,6 @@ const JobPostingDialog = ({ open, onOpenChange }: JobPostingFormProps) => {
               <div className="grid gap-2 cols-span-1">
                 <Label htmlFor="howtoapply">How to Apply</Label>
                 <Textarea id="howtoapply" name="howtoapply" value={howtoapply} onChange={(e) => setHowtoapply(e.target.value)} className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0" />
-
               </div>
               {error && (
                 <div className="text-red-500 text-sm text-center">{error}</div>

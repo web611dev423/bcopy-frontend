@@ -18,7 +18,7 @@ const initialState: ContributorState = {
 export const fetchRecruiters = createAsyncThunk(
   'recruiters/fetchRecruiters',
   async () => {
-    const response = await api.get('/recruiters');
+    const response = await api.get('/api/recruiters');
     return response.data;
   }
 );

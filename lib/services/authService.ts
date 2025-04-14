@@ -22,7 +22,7 @@ interface RegisterData extends LoginCredentials {
 export const authService = {
   async login(credentials: LoginCredentials) {
     try {
-      const response = await api.post("/auth/login", {
+      const response = await api.post("/api/auth/login", {
         email: credentials.email,
         password: credentials.password,
         userType: credentials.userType
@@ -41,7 +41,7 @@ export const authService = {
   async register(data: RegisterData) {
     console.log(data);
     try {
-      const response = await api.post("/auth/register", data);
+      const response = await api.post("/api/auth/register", data);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userData', JSON.stringify(response.data.user));

@@ -17,7 +17,7 @@ const initialState: ProgramState = {
 export const fetchPrograms = createAsyncThunk(
   'programs/fetchPrograms',
   async () => {
-    const response = await api.get('/programs');
+    const response = await api.get('/api/programs');
     return response.data;
   }
 );
@@ -25,7 +25,7 @@ export const fetchPrograms = createAsyncThunk(
 export const copyProgram = createAsyncThunk(
   'programs/copyProgram',
   async (programId: string) => {
-    const response = await api.put(`/programs/${programId}/copy`);
+    const response = await api.put(`/api/programs/${programId}/copy`);
     return response.data;
   }
 );

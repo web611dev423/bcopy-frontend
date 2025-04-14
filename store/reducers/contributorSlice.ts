@@ -18,7 +18,7 @@ const initialState: ContributorState = {
 export const fetchContributors = createAsyncThunk(
   'contributors/fetchContributors',
   async () => {
-    const response = await api.get('/contributors');
+    const response = await api.get('/api/contributors');
     return response.data;
   }
 );

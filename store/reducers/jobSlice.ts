@@ -19,7 +19,7 @@ const initialState: JobState = {
 export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
   async () => {
-    const response = await api.get('/jobs');
+    const response = await api.get('/api/jobs');
     return response.data;
   }
 );
@@ -28,7 +28,7 @@ export const newjob = createAsyncThunk(
   'jobs/newjob',
   async (job: any) => {
     console.log(job);
-    const response = await api.post('/jobs/new', job);
+    const response = await api.post('/api/jobs/new', job);
     return response.data;
   }
 );
