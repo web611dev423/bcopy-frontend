@@ -29,6 +29,20 @@ export const copyProgram = createAsyncThunk(
     return response.data;
   }
 );
+export const viewProgram = createAsyncThunk(
+  'programs/viewProgram',
+  async (programId: string) => {
+    const response = await api.put(`/api/programs/${programId}/view`);
+    return response.data;
+  }
+);
+export const shareProgram = createAsyncThunk(
+  'programs/shareProgram',
+  async (programId: string) => {
+    const response = await api.put(`/api/programs/${programId}/share`);
+    return response.data;
+  }
+);
 
 const programSlice = createSlice({
   name: 'programs',
@@ -50,12 +64,48 @@ const programSlice = createSlice({
       })
       .addCase(copyProgram.pending, (state) => {
         state.loading = true;
+
       })
       .addCase(copyProgram.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload);
+        const index = state.items.findIndex(item => item._id === action.payload.item._id);
+        if (index !== -1) {
+          state.items[index] = action.payload.item;
+        }
         state.error = null;
       })
       .addCase(copyProgram.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(viewProgram.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(viewProgram.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(item => item._id === action.payload.item._id);
+        if (index !== -1) {
+          state.items[index] = action.payload.item;
+        }
+        state.error = null;
+      })
+      .addCase(viewProgram.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(shareProgram.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(shareProgram.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(item => item._id === action.payload.item._id);
+        if (index !== -1) {
+          state.items[index] = action.payload.item;
+        }
+        state.error = null;
+      })
+      .addCase(shareProgram.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       });

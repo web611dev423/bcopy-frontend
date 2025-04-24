@@ -5,11 +5,15 @@ import { motion } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchContributors } from "@/store/reducers/contributorSlice";
 
-
+import { useAuth } from "@/hooks/useAuth";
 
 const Contributors = () => {
+
+  const { isAuthenticated, user } = useAuth();
+
   const dispatch = useAppDispatch();
   const { items, loading, error } = useAppSelector((state) => state.contributors);
+
 
   useEffect(() => {
     dispatch(fetchContributors());
@@ -18,6 +22,12 @@ const Contributors = () => {
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if ((isAuthenticated && user?.country))
+      setSelectedCountry(user.country);
+    else
+      setSelectedCountry('all');
+  }, [isAuthenticated, user])
 
   // Get unique countries
   const countries = ["all", ...Array.from(new Set(items.map(c => c.country)))];
@@ -73,7 +83,7 @@ const Contributors = () => {
               <ProfileCard
                 key={contributor._id}
                 title={contributor.name}
-                subtitle={contributor.contributions + " contributions"}
+                subtitle={contributor.contributions.length + " contributions"}
                 country={contributor.country}
                 image={""}
               />

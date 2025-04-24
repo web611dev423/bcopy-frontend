@@ -7,7 +7,7 @@ import categoryReducer from './categorySlice';
 import programReducer from './programSlice';
 import contributionReducer from './contributionSlice';
 import jobReducer from './jobSlice';
-
+import dashStringSlice from './dashStringSlice';
 const rootReducer = combineReducers({
   // Add your reducers here
   contributors: contributorReducer,
@@ -16,6 +16,7 @@ const rootReducer = combineReducers({
   programs: programReducer,
   contributions: contributionReducer,
   jobs: jobReducer,
+  dashboardstring: dashStringSlice,
 });
 
 export default rootReducer;

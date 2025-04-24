@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '@/lib/api';
-import { create } from 'node:domain';
 
 // Define your data types
 interface JobState {
@@ -45,6 +44,7 @@ const jobSlice = createSlice({
       .addCase(fetchJobs.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload.data;
+        console.log(state.items);
         state.error = null;
       })
       .addCase(fetchJobs.rejected, (state, action) => {

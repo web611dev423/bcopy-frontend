@@ -1,12 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './reducers';
-
+import { listenerMiddleware } from '@/middleware/toastMiddleware';
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      // your custom middleware here
-    ),
+    getDefaultMiddleware()
+      .prepend(listenerMiddleware.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

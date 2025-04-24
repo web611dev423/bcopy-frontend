@@ -3,19 +3,25 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchRecruiters } from "@/store/reducers/recruiterSlice";
-
+import { useAuth } from "@/hooks/useAuth";
 interface RecruitersProps {
   recruiters: any[];
 }
 
 const Recruiters = () => {
   const dispatch = useAppDispatch();
+  const { isAuthenticated, user } = useAuth();
   const { items, loading, error } = useAppSelector((state) => state.recruiters);
   const [selectedCountry, setSelectedCountry] = useState<string>("all");
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
+  useEffect(() => {
+    if ((isAuthenticated && user?.country))
+      setSelectedCountry(user.country);
+    else
+      setSelectedCountry('all');
+  }, [isAuthenticated, user])
   // Get unique countries
   const countries = ["all", ...Array.from(new Set(items.map(r => r.country)))];
 
@@ -74,7 +80,7 @@ const Recruiters = () => {
               <ProfileCard
                 key={recruiter._id}
                 title={recruiter.companyName}
-                subtitle={recruiter.positions + " open positions"}
+                subtitle={recruiter.positions.length + " open positions"}
                 country={recruiter.country}
                 image={""}
               />

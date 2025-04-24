@@ -1,7 +1,7 @@
 export const HELLO_DEVELOPER = {
-    java: "HOW",
-    python: "ARE",
-    html: "YOU"
+    java: `I am Mark = < web developer >;\nIn love with coding = true;\nConstantly committing(!);`,
+    python: `I am Mark = < web developer >;\nIn love with coding = true;\nConstantly committing(!);`,
+    html: `I am Mark = < web developer >;\nIn love with coding = true;\nConstantly committing(!);`
 };
 
 export interface ProfileCardProps {
@@ -10,8 +10,6 @@ export interface ProfileCardProps {
     subtitle: string;
     country: string;
 }
-
-
 
 export const ARTICLES = [
     "Senior Developer at Google",

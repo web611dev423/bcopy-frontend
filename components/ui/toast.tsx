@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ToastPrimitives from '@radix-ui/react-toast';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -32,6 +32,20 @@ const toastVariants = cva(
         default: 'border bg-background text-foreground',
         destructive:
           'destructive group border-destructive bg-destructive text-destructive-foreground',
+        success: [
+          "border-green-500",
+          "bg-green-500",
+          "text-white",
+          "shadow-lg",
+          "hover:bg-green-600",
+          "transition-colors",
+          "duration-200",
+          // Add an icon color for success toasts
+          "[&>svg]:text-white",
+          // Style the close button
+          "[&>button]:text-white/80",
+          "[&>button:hover]:text-white",
+        ].join(" "),
       },
     },
     defaultVariants: {
@@ -43,14 +57,19 @@ const toastVariants = cva(
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
+  VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(toastVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {variant === 'success' && (
+        <Check className="h-5 w-5 text-white mr-2" />
+      )}
+      {props.children}
+    </ToastPrimitives.Root>
   );
 });
 Toast.displayName = ToastPrimitives.Root.displayName;

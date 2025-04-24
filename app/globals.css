@@ -129,3 +129,26 @@
 .token.number {
   color: #F78C6C;
 }
+.shiki {
+  background: transparent !important;
+}
+
+.shiki code {
+  counter-reset: step;
+  counter-increment: step 0;
+}
+
+.shiki code .line::before {
+  content: counter(step);
+  counter-increment: step;
+  width: 1rem;
+  margin-right: 1.5rem;
+  display: inline-block;
+  text-align: right;
+  color: #888;
+}
+.dialog-size {
+  max-width: 600px;
+  width: 90vw;
+  height: 80vh;
+}

@@ -21,6 +21,7 @@ interface SidebarProps {
   toggleCategory: (name: string) => void;
   onSelectProgram: (program: Program) => void;
   onShowJobPosting: () => void;
+  onShowApplyJob: () => void;
 }
 
 const Sidebar = ({
@@ -28,7 +29,8 @@ const Sidebar = ({
   expandedCategories,
   toggleCategory,
   onSelectProgram,
-  onShowJobPosting
+  onShowJobPosting,
+  onShowApplyJob
 }: SidebarProps) => {
 
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -99,7 +101,7 @@ const Sidebar = ({
         />
 
         {/* Bottom Section */}
-        <div className="shrink-0 p-4 space-y-4 border-t border-gray-200">
+        <div className="shrink-0 p-4 space-y-1 border-t border-gray-200">
           <div className="flex justify-center">
             <Button
               className="text-[#0284DA] outline-hidden bg-white hover:bg-white hover:text-[#0284FF]"
@@ -109,7 +111,7 @@ const Sidebar = ({
             </Button>
           </div>
           <DailyQuiz />
-          <Articles onShowJobPosting={onShowJobPosting} />
+          <Articles onShowJobPosting={onShowJobPosting} onShowApplyJob={onShowApplyJob} />
         </div>
       </div>
     </div>

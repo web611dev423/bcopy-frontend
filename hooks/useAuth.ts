@@ -5,6 +5,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  country: string;
   role: "user" | "recruiter";
 }
 
@@ -21,7 +22,7 @@ export function useAuth() {
   const checkAuth = () => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("userData");
-
+    console.log("userData", userData);
     if (token && userData) {
       setUser(JSON.parse(userData));
       setIsAuthenticated(true);
@@ -39,7 +40,7 @@ export function useAuth() {
     localStorage.removeItem("userType");
     setUser(null);
     setIsAuthenticated(false);
-    router.push("/login");
+    router.push("/auth");
   };
 
   return {

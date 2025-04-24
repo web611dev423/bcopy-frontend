@@ -12,6 +12,8 @@ import CategorySidebar from "@/components/layout/category-sidebar";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchCategories } from "@/store/reducers/categorySlice";
 import { fetchPrograms } from "@/store/reducers/programSlice";
+import JobPostingDialog from "@/components/dialog/jobposting-dialog";
+import { ApplyJobDialog } from "@/components/dialog/applyjob-dialog";
 
 export default function Categories() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -40,6 +42,14 @@ export default function Categories() {
     );
   };
 
+  const [showJobPosting, setShowJobPosting] = useState(false);
+  const [showApplyJob, setShowApplyJob] = useState(false);
+  const handleJobPosting = () => {
+    setShowJobPosting(true);
+  };
+  const handleApplyJob = () => {
+    setShowApplyJob(true);
+  }
   const handleProgramClick = (category: string, program: string) => {
     // Implementation of handleProgramClick 
   };
@@ -65,6 +75,8 @@ export default function Categories() {
         <div className="flex flex-col xl:flex-row w-full relative min-h-[calc(100vh-5rem)]">
           <CategorySidebar
             isSidebarOpen={isSidebarOpen}
+            onShowJobPosting={handleJobPosting}
+            onShowApplyJob={handleApplyJob}
           />
           <div
             className="flex-1 xl:ml-64 p-4 xl:p-6"
@@ -146,6 +158,15 @@ export default function Categories() {
         </div>
       </div>
       <Footer />
+      <JobPostingDialog
+        open={showJobPosting}
+        onOpenChange={setShowJobPosting}
+      />
+
+      <ApplyJobDialog
+        open={showApplyJob}
+        onOpenChange={setShowApplyJob}
+      />
     </div>
   );
 }

@@ -53,31 +53,28 @@ const ChatGPTCard = ({ language, clickFunc, showDialog }: ChatGPTCardProps) => {
           onChange={(e) => setCode(e.target.value)}
         />
       </CardContent>
-      <CardFooter className="bg-gray-100 flex flex-wrap justify-start px-2 py-2 gap-2 border-t border-[#c8c8c8] h-full">
+      <CardFooter className="bg-gray-100 flex flex-wrap justify-start px-2 py-2 gap-2 border-t border-[#c8c8c8]  h-full w-full grid grid-cols-3">
 
         <Button
-
           variant="outline"
           size="sm"
-          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
+          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none col-span-1"
           onClick={() => convertCode("java")}
         >
           <WandSparkles className="h-4 w-4 mr-1" /> {"Java"}
         </Button>
         <Button
-
           variant="outline"
           size="sm"
-          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
+          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none col-span-1"
           onClick={() => convertCode("python")}
         >
           <WandSparkles className="h-4 w-4 mr-1" /> {"Python"}
         </Button>
         <Button
-
           variant="outline"
           size="sm"
-          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none"
+          className="text-white bg-[#0284DA] hover:bg-[#0284FF] hover:text-white outline-none col-span-1"
           onClick={() => convertCode("html")}
         >
           <WandSparkles className="h-4 w-4 mr-1" /> {"HTML"}

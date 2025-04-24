@@ -6,9 +6,11 @@ import { Button } from "../ui/button";
 
 interface CategorySidebarProps {
   isSidebarOpen: boolean;
+  onShowJobPosting: () => void;
+  onShowApplyJob: () => void;
 }
 
-const CategorySidebar = ({ isSidebarOpen }: CategorySidebarProps) => {
+const CategorySidebar = ({ isSidebarOpen, onShowJobPosting, onShowApplyJob }: CategorySidebarProps) => {
   const handleShowJobPosting = () => {
     // Handle job posting display logic here
     console.log("show job posting");
@@ -24,6 +26,7 @@ const CategorySidebar = ({ isSidebarOpen }: CategorySidebarProps) => {
     `}>
       <div className="h-full flex flex-col overflow-auto">
         {/* Bottom Section */}
+        <div className="min-h-[390px]" />
         <div className="shrink-0 p-4 space-y-4 border-t border-gray-200">
           <div className="flex justify-center">
             <Button
@@ -34,7 +37,7 @@ const CategorySidebar = ({ isSidebarOpen }: CategorySidebarProps) => {
             </Button>
           </div>
           <DailyQuiz />
-          <Articles onShowJobPosting={handleShowJobPosting} />
+          <Articles onShowJobPosting={onShowJobPosting} onShowApplyJob={onShowApplyJob} />
         </div>
       </div>
     </div>

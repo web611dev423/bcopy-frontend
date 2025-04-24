@@ -6,4 +6,7 @@ export interface Program {
     python: string;
     html: string;
   }
+  views: number,
+  copies: number,
+  shares: number
 }

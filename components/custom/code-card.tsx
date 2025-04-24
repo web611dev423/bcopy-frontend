@@ -1,12 +1,11 @@
 "use client";
 
-import { Copy, Share, Flag, ExternalLink, Lightbulb } from "lucide-react";
-import { Highlight, themes } from "prism-react-renderer";
+import { Copy, Flag, ExternalLink, Lightbulb, Eye } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState, useRef } from "react";
-import { HELLO_DEVELOPER } from "@/constants";
-import { color } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+
+import * as shiki from "shiki";
 
 interface CodeCardProps {
   code: string;
@@ -16,16 +15,38 @@ interface CodeCardProps {
   clickFunc: (lang: string) => void;
   copyCode: () => void;
   showDialog: (open: boolean) => void;
+  copiedNumber: number;
+  viewedNumber: number;
+  sharedNumber: number;
   onShowFeedback: (type: "bug" | "suggestion") => void;
 }
 
-const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard, copyCode, onShowFeedback }: CodeCardProps) => {
+const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard, copyCode, onShowFeedback, copiedNumber, viewedNumber, sharedNumber }: CodeCardProps) => {
   const [mouseDownPosition, setMouseDownPosition] = useState<{ x: number; y: number } | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const handleMouseDown = (e: React.MouseEvent) => {
     setMouseDownPosition({ x: e.clientX, y: e.clientY });
   };
-
+  const [copied, setCopied] = useState(false);
+  const [highlightedCode, setHighlightedCode] = useState('');
+  const onShowCode = () => {
+    clickFunc(language);
+    showDialog(true);
+  }
+  const formatCode = (code: string) => {
+    const formattedCode = code.replaceAll('    ', '  ');
+    return formattedCode;
+  }
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+    await copyCode();
+  }
   const handleMouseUp = (e: React.MouseEvent) => {
     if (!isDashboard) {
       if (mouseDownPosition) {
@@ -44,7 +65,22 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard, c
       }
     }
   };
+  useEffect(() => {
+    const highlight = async () => {
+      const highlighter = await shiki.createHighlighter({
+        themes: ['light-plus', 'monokai'],
+        langs: ['javascript', 'python', 'java', 'html']
+      });
 
+      const highlighted = highlighter.codeToHtml(formatCode(code), {
+        lang: language,
+        theme: isDashboard ? 'monokai' : 'light-plus',
+      });
+      setHighlightedCode(highlighted);
+    };
+
+    highlight();
+  }, [code, language, isDashboard]);
   return (
     <Card className={`h-full hover:cursor-pointer shadow-lg lounded-lg ${isDashboard ? "bg-[#1f1f2b]" : "bg-white"}`}>
       <CardHeader className="ps-2 pe-2 pt-0 pb-2 border-b border-[#c8c8c8] grid grid-cols-12 w-full">
@@ -65,36 +101,51 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard, c
       <CardContent className="p-2 font-display">
         <ScrollArea
           ref={scrollAreaRef}
-          className={`h-[200px] sm:h-[250px] lg:h-[300px] w-full p-4 ${isDashboard ? "text-[7rem] md:text-[9rem] lg:text-[11rem]" : "text-sm md:text-md"}`}
+          className={"h-[200px] sm:h-[250px] lg:h-[300px] w-full p-4 text-sm md:text-md"}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}>
-          <Highlight
-            theme={isDashboard == true ? themes.vsDark : themes.vsLight}
-            code={code}
-            language={language == "java" ? "c" : language}
-          >
-            {({ className, style, tokens, getLineProps, getTokenProps }) => (
-              <pre className={className} style={{ ...style, backgroundColor: 'transparent' }}>
-                {tokens.map((line, i) => (
-                  <div key={i} {...getLineProps({ line })} className={isDashboard ? "flex" : ""}>
-                    {isDashboard ? null : <span className="text-gray-500 mr-4">{i + 1}</span>}
-                    {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token })} className={isDashboard ? "w-full text-center italic font-['Cookie']" : "w-full"} />
-                    ))}
-                  </div>
-                ))}
-              </pre>
-            )}
-          </Highlight>
+          <div
+            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            className="shiki"
+            style={{ backgroundColor: 'transparent' }}
+          />
         </ScrollArea>
       </CardContent>
-      <CardFooter className={`${isDashboard ? "bg-[#202938]" : "bg-white"} p-2 sm:p-4 border-t border-[#c8c8c8] flex justify-center space-x-2 sm:space-x-6 items-center rounded-lg`}>
-        <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={copyCode}><Copy className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-        <button className="text-gray-400 hover:text-gray-600 transition-colors"><Share className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-        <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("suggestion")}><Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-        <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("bug")}><Flag className="h-4 w-4 sm:h-5 sm:w-5" /></button>
-        <button className="text-gray-400 hover:text-gray-600 transition-colors"><ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+      <CardFooter className={`${isDashboard ? "bg-[#202938]" : "bg-white"} min-h-[50px] p-2 sm:p-4 border-t border-[#c8c8c8] relative flex items-center rounded-lg `}>
+        {!isDashboard && (
+          <div className="grid grid-cols-3 text-gray-800 text-md gap-1">
+            <div className="col-span-1 w-fit-content flex items-center" >
+              <Eye className="w-4 h-4" />{viewedNumber}
+            </div>
+            <div className="col-span-1 w-fit-content flex items-center">
+              <Copy className="w-4 h-4" />{copiedNumber}
+            </div>
+            <div className="col-span-1 w-fit-content flex items-center">
+              <ExternalLink className="w-4 h-4" />{sharedNumber}
+            </div>
+          </div>
+        )}
+
+        {/* Centered group of buttons */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex space-x-2 sm:space-x-4">
+          <button className={`hover:text-gray-600 transition-colors ${copied ? "text-gray-600" : "text-gray-400"}`} onClick={handleCopyCode}>
+            <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+          <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowCode()}>
+            <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+          <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("bug")}>
+            <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+          <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("suggestion")}>
+            <Flag className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+          <button className="text-gray-400 hover:text-gray-600 transition-colors">
+            <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+        </div>
       </CardFooter>
+
     </Card >
   )
 }

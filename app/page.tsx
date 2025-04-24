@@ -11,6 +11,7 @@ import Footer from "@/components/layout/footer";
 import CodeDialog from "@/components/dialog/code-dialog";
 import FeedbackDialog from "@/components/dialog/feedback-dialog";
 import JobPostingDialog from "@/components/dialog/jobposting-dialog";
+import { ApplyJobDialog } from "@/components/dialog/applyjob-dialog";
 
 import { ARTICLES, LANGUAGES, HELLO_DEVELOPER } from "@/constants";
 import Sidebar from "@/components/layout/sidebar";
@@ -19,22 +20,34 @@ import Recruiters from "@/components/sections/recruiters";
 import Contributors from "@/components/sections/contributors";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchCategories } from "@/store/reducers/categorySlice";
+import { fetchDashboardString } from "@/store/reducers/dashStringSlice";
 import { Fascinate } from "next/font/google";
 import { Program } from "@/types";
-import { copyProgram } from "@/store/reducers/programSlice";
-
+import { copyProgram, viewProgram } from "@/store/reducers/programSlice";
+import { savedContributions } from "@/store/reducers/contributionSlice";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState("");
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     dispatch(fetchCategories());
+    dispatch(fetchDashboardString());
   }, [dispatch]);
+  const { user, isAuthenticated } = useAuth();
+  // useEffect(() => {
+  //   if (isAuthenticated && user?.id) {
+  //     dispatch(savedContributions(user.id));
+  //   }
+  // }, [isAuthenticated, user?.id]);
 
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackType, setFeedbackType] = useState<"bug" | "suggestion">("bug");
   const [showJobPosting, setShowJobPosting] = useState(false);
+  const [showApplyJob, setShowApplyJob] = useState(false);
 
   const handleFeedback = (type: "bug" | "suggestion") => {
     setShowFeedback(true);
@@ -45,7 +58,11 @@ export default function Home() {
     setShowJobPosting(true);
   }
 
+  const handleApplyJob = () => {
+    setShowApplyJob(true);
+  }
   const categoriesState = useAppSelector((state) => state.categories);
+  const dashboardString = useAppSelector((state) => state.dashboardstring.dashboardString);
   const categories = categoriesState.items;
   const [expandedCategories, setExpandedCategories] = useState<string[]>(
     categories.length > 0 ? [categories[0].name] : []
@@ -54,6 +71,10 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const handleViewCode = async () => {
+    setShowDialog(true);
+    await dispatch(viewProgram(selectedProgram._id));
+  }
   const [selectedProgram, setSelectedProgram] = useState<Program>(
     {
       _id: "",
@@ -63,6 +84,9 @@ export default function Home() {
         python: "",
         html: ""
       },
+      views: 0,
+      copies: 0,
+      shares: 0,
     }
   );
 
@@ -73,16 +97,9 @@ export default function Home() {
     }
   }, [showDialog]);
 
-  const handleCopyCode = async (code: string) => {
+  const handleCopyCode = async () => {
     if (selectedProgram.name === "") {
       return;
-    }
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
     }
     dispatch(copyProgram(selectedProgram._id));
   }
@@ -132,6 +149,7 @@ export default function Home() {
             toggleCategory={toggleCategory}
             onSelectProgram={handleProgramSelect}
             onShowJobPosting={handleJobPosting}
+            onShowApplyJob={handleApplyJob}
           />
           <div
             className="flex-1 xl:ml-64 p-4 xl:p-6"
@@ -139,45 +157,54 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               <CodeCard
                 code={selectedProgram.name === ""
-                  ? HELLO_DEVELOPER.java
+                  ? dashboardString.dashString
                   : removeBackticks(selectedProgram.code?.java)}
                 language="java"
                 title={selectedProgram.name === ""
                   ? "Hello Developer"
                   : selectedProgram.name}
                 clickFunc={setSelectedLanguage}
-                showDialog={setShowDialog}
-                copyCode={() => handleCopyCode(selectedProgram.code?.java)}
+                showDialog={handleViewCode}
+                copyCode={handleCopyCode}
                 isDashboard={selectedProgram.name === ""}
                 onShowFeedback={handleFeedback}
+                copiedNumber={selectedProgram.copies}
+                viewedNumber={selectedProgram.views}
+                sharedNumber={selectedProgram.shares}
               />
               <CodeCard
                 code={selectedProgram.name === ""
-                  ? HELLO_DEVELOPER.python
+                  ? dashboardString.dashString
                   : removeBackticks(selectedProgram.code?.python)}
                 language="python"
                 title={selectedProgram.name === ""
                   ? "Hello Developer"
                   : selectedProgram.name}
                 clickFunc={setSelectedLanguage}
-                showDialog={setShowDialog}
-                copyCode={() => handleCopyCode(selectedProgram.code?.python)}
+                showDialog={handleViewCode}
+                copyCode={handleCopyCode}
                 isDashboard={selectedProgram.name === ""}
                 onShowFeedback={handleFeedback}
+                copiedNumber={selectedProgram.copies}
+                viewedNumber={selectedProgram.views}
+                sharedNumber={selectedProgram.shares}
               />
               <CodeCard
                 code={selectedProgram.name === ""
-                  ? HELLO_DEVELOPER.html
+                  ? dashboardString.dashString
                   : removeBackticks(selectedProgram.code?.html)}
                 language="html"
                 title={selectedProgram.name === ""
                   ? "Hello Developer"
                   : selectedProgram.name}
                 clickFunc={setSelectedLanguage}
-                showDialog={setShowDialog}
-                copyCode={() => handleCopyCode(selectedProgram.code?.html)}
+                showDialog={handleViewCode}
+                copyCode={handleCopyCode}
                 isDashboard={selectedProgram.name === ""}
                 onShowFeedback={handleFeedback}
+                copiedNumber={selectedProgram.copies}
+                viewedNumber={selectedProgram.views}
+                sharedNumber={selectedProgram.shares}
               />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 sm:gap-4">
@@ -212,7 +239,7 @@ export default function Home() {
           selectedLanguage === "python" ? selectedProgram.name === "" ? HELLO_DEVELOPER.python : removeBackticks(selectedProgram.code?.python) :
             selectedProgram.name === "" ? HELLO_DEVELOPER.html : removeBackticks(selectedProgram.code?.html)}
         title={selectedProgram.name === "" ? "Hello Developer" : selectedProgram.name}
-        copyCode={() => handleCopyCode(selectedProgram.code?.[selectedLanguage as keyof typeof selectedProgram.code])}
+        copyCode={handleCopyCode}
       />
 
       <FeedbackDialog
@@ -220,11 +247,17 @@ export default function Home() {
         programId={selectedProgram._id}
         open={showFeedback}
         onOpenChange={setShowFeedback}
+        selectedProgram={selectedProgram}
       />
 
       <JobPostingDialog
         open={showJobPosting}
         onOpenChange={setShowJobPosting}
+      />
+
+      <ApplyJobDialog
+        open={showApplyJob}
+        onOpenChange={setShowApplyJob}
       />
     </div>
   );
