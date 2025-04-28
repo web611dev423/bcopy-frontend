@@ -85,7 +85,7 @@ export default function AuthForm() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <Select
+              {/* <Select
                 value={userType}
                 onValueChange={(value: "user" | "recruiter") => setUserType(value)}
               >
@@ -96,7 +96,7 @@ export default function AuthForm() {
                   <SelectItem value="user">User</SelectItem>
                   <SelectItem value="recruiter">Recruiter</SelectItem>
                 </SelectContent>
-              </Select>
+              </Select> */}
 
               {mode === "register" && (
                 <Input

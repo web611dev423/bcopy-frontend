@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { useState, useRef, useEffect } from "react";
 
 import * as shiki from "shiki";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 interface CodeCardProps {
   code: string;
@@ -128,21 +129,63 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard, c
 
         {/* Centered group of buttons */}
         <div className="absolute left-1/2 -translate-x-1/2 flex space-x-2 sm:space-x-4">
-          <button className={`hover:text-gray-600 transition-colors ${copied ? "text-gray-600" : "text-gray-400"}`} onClick={handleCopyCode}>
-            <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
-          <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowCode()}>
-            <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
-          <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("bug")}>
-            <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
-          <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("suggestion")}>
-            <Flag className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
-          <button className="text-gray-400 hover:text-gray-600 transition-colors">
-            <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className={`hover:text-gray-600 transition-colors ${copied ? "text-gray-600" : "text-gray-400"}`} onClick={handleCopyCode}>
+                  <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copy</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowCode()}>
+                  <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>View</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("bug")}>
+                  <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Bug</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="text-gray-400 hover:text-gray-600 transition-colors" onClick={() => isDashboard ? null : onShowFeedback("suggestion")}>
+                  <Flag className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Suggestion</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Share</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </CardFooter>
 

@@ -49,13 +49,13 @@ const JobPostingDialog = ({ open, onOpenChange }: JobPostingFormProps) => {
   useEffect(() => {
     if (open && !isAuthenticated) {
       onOpenChange(false); // Close the dialog
-      router.push('/auth'); // Redirect to auth page
+      router.push('/recruiterauth'); // Redirect to auth page
     }
   }, [open, isAuthenticated, router, onOpenChange]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      router.push("/auth");
+      router.push("/recruiterauth");
       return;
     }
     setLoading(true);

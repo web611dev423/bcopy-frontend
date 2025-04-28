@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,7 +26,7 @@ import ftpapi from '@/lib/ftpapi';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-
+import { useRouter } from 'next/navigation';
 interface ApplyJobDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -36,9 +36,9 @@ export function ApplyJobDialog({
   open,
   onOpenChange,
 }: ApplyJobDialogProps) {
-  const { user } = useAuth(); // Get logged-in user info
+  const { user, isAuthenticated } = useAuth(); // Get logged-in user info
   const { toast } = useToast();
-
+  const router = useRouter();
   const [description, setDescription] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -153,7 +153,12 @@ export function ApplyJobDialog({
     }
     onOpenChange(isOpen);
   };
-
+  useEffect(() => {
+    if (open && !isAuthenticated) {
+      onOpenChange(false); // Close the dialog
+      router.push('/userauth'); // Redirect to auth page
+    }
+  }, [open, isAuthenticated, router, onOpenChange]);
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="dialog-size p-0 m-0">

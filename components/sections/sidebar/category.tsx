@@ -96,7 +96,7 @@ const Category = ({ expandedCategories, toggleCategory, onSelectProgram, searchQ
 
   return (
     <div className="flex-1 overflow-y-auto min-h-[300px]">
-      <div className="p-4 space-y-2">{renderCategoryTree("68093337575941b2963935db")}</div>
+      <div className="p-4 space-y-2">{renderCategoryTree(null)}</div>
     </div>
   );
 };
