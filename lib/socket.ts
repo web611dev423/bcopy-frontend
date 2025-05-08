@@ -5,7 +5,8 @@ import { SocketEvent, SocketPayload } from './types';
 let socket: Socket | null = null;
 
 export const initializeSocket = (userId: string) => {
-  const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+
+  const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   if (!socket && userId) {
     socket = io(SOCKET_URL, {
       auth: { userId },
