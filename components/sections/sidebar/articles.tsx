@@ -37,11 +37,8 @@ const Articles = ({ onShowJobPosting, onShowApplyJob }: ArticlesProps) => {
           <Button onClick={onShowApplyJob} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Apply</Button>
           : <Button onClick={onShowJobPosting} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Post Job</Button>
         } */}
-        <Button onClick={onShowApplyJob} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Apply</Button>
-        <Button onClick={onShowJobPosting} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Post Job</Button>
-
+        <Button onClick={onShowApplyJob} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Browse Jobs</Button>
       </div>
-
     </div>
   );
 };

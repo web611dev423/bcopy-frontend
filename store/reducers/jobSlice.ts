@@ -26,7 +26,6 @@ export const fetchJobs = createAsyncThunk(
 export const newjob = createAsyncThunk(
   'jobs/newjob',
   async (job: any) => {
-    console.log(job);
     const response = await api.post('/api/jobs/new', job);
     return response.data;
   }
@@ -44,7 +43,6 @@ const jobSlice = createSlice({
       .addCase(fetchJobs.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload.data;
-        console.log(state.items);
         state.error = null;
       })
       .addCase(fetchJobs.rejected, (state, action) => {

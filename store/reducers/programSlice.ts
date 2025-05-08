@@ -68,7 +68,6 @@ const programSlice = createSlice({
       })
       .addCase(copyProgram.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
         const index = state.items.findIndex(item => item._id === action.payload.item._id);
         if (index !== -1) {
           state.items[index] = action.payload.item;

@@ -32,10 +32,7 @@ interface ApplyJobDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ApplyJobDialog({
-  open,
-  onOpenChange,
-}: ApplyJobDialogProps) {
+const ApplyJobDialog = ({ open, onOpenChange }: ApplyJobDialogProps) => {
   const { user, isAuthenticated } = useAuth(); // Get logged-in user info
   const { toast } = useToast();
   const router = useRouter();
@@ -108,7 +105,6 @@ export function ApplyJobDialog({
       toast({ title: "Missing Resume", description: "Please upload your resume (PDF).", variant: "destructive" });
       return;
     }
-    console.log(user.id);
     setIsLoading(true);
     const formData = new FormData();
     formData.append('userId', user.id); // Get name from auth context
@@ -266,3 +262,5 @@ export function ApplyJobDialog({
     </Dialog>
   );
 }
+
+export default ApplyJobDialog;

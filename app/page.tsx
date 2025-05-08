@@ -10,8 +10,6 @@ import Footer from "@/components/layout/footer";
 
 import CodeDialog from "@/components/dialog/code-dialog";
 import FeedbackDialog from "@/components/dialog/feedback-dialog";
-import JobPostingDialog from "@/components/dialog/jobposting-dialog";
-import { ApplyJobDialog } from "@/components/dialog/applyjob-dialog";
 
 import { ARTICLES, LANGUAGES, HELLO_DEVELOPER } from "@/constants";
 import Sidebar from "@/components/layout/sidebar";
@@ -27,6 +25,8 @@ import { copyProgram, viewProgram } from "@/store/reducers/programSlice";
 import { savedContributions } from "@/store/reducers/contributionSlice";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 
 export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -130,10 +130,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-      <Header
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
+      <Header />
       {/* Add overlay for mobile/tablet */}
       {isSidebarOpen && (
         <div
@@ -151,6 +148,13 @@ export default function Home() {
             onShowJobPosting={handleJobPosting}
             onShowApplyJob={handleApplyJob}
           />
+          <Button
+            size="icon"
+            className="fixed z-50 bottom-4 right-4 xl:hidden bg-blue-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-blue-700 flex items-center justify-center transition-all duration-300"
+            onClick={toggleSidebar}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
           <div
             className="flex-1 xl:ml-64 p-4 xl:p-6"
           >
@@ -248,16 +252,6 @@ export default function Home() {
         open={showFeedback}
         onOpenChange={setShowFeedback}
         selectedProgram={selectedProgram}
-      />
-
-      <JobPostingDialog
-        open={showJobPosting}
-        onOpenChange={setShowJobPosting}
-      />
-
-      <ApplyJobDialog
-        open={showApplyJob}
-        onOpenChange={setShowApplyJob}
       />
     </div>
   );

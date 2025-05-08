@@ -63,7 +63,7 @@ export default function AuthForm() {
           ...formData,
           userType: userType,
         }).then(() => {
-          window.location.href = "/";
+          router.push("/");
         });
 
       }

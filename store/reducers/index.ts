@@ -8,6 +8,8 @@ import programReducer from './programSlice';
 import contributionReducer from './contributionSlice';
 import jobReducer from './jobSlice';
 import dashStringSlice from './dashStringSlice';
+import quizSlice from './quizSlice';
+
 const rootReducer = combineReducers({
   // Add your reducers here
   contributors: contributorReducer,
@@ -17,6 +19,7 @@ const rootReducer = combineReducers({
   contributions: contributionReducer,
   jobs: jobReducer,
   dashboardstring: dashStringSlice,
+  quizzes: quizSlice,
 });
 
 export default rootReducer;

@@ -22,7 +22,6 @@ export function useAuth() {
   const checkAuth = () => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("userData");
-    console.log("userData", userData);
     if (token && userData) {
       setUser(JSON.parse(userData));
       setIsAuthenticated(true);
@@ -35,12 +34,13 @@ export function useAuth() {
   };
 
   const logout = () => {
+    const userType = user?.role;
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
     localStorage.removeItem("userType");
     setUser(null);
     setIsAuthenticated(false);
-    router.push("/auth");
+    router.push(userType == "user" ? "/userauth" : "/recruiterauth");
   };
 
   return {

@@ -20,7 +20,6 @@ const initialState: FeedbackState = {
 export const newContributions = createAsyncThunk(
   'contributions/newContributions',
   async (data: any) => {
-    console.log("data", data);
     const response = await api.post('/api/contributions/new', data);
     return response.data;
   }

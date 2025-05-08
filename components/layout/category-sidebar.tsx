@@ -11,10 +11,6 @@ interface CategorySidebarProps {
 }
 
 const CategorySidebar = ({ isSidebarOpen, onShowJobPosting, onShowApplyJob }: CategorySidebarProps) => {
-  const handleShowJobPosting = () => {
-    // Handle job posting display logic here
-    console.log("show job posting");
-  };
   return (
     <div className={`
       fixed xl:fixed inset-y-0 left-0 z-40 overflow-y-auto

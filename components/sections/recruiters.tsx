@@ -1,5 +1,5 @@
 import ProfileCard from "../custom/profile-card";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchRecruiters } from "@/store/reducers/recruiterSlice";
@@ -26,9 +26,12 @@ const Recruiters = () => {
   const countries = ["all", ...Array.from(new Set(items.map(r => r.country)))];
 
   // Filter recruiters based on selected country
-  const filteredRecruiters = selectedCountry === "all"
-    ? items
-    : items.filter(r => r.country === selectedCountry);
+  const filteredRecruiters = useMemo(() =>
+    selectedCountry === "all"
+      ? items
+      : items.filter(c => c.country === selectedCountry),
+    [items, selectedCountry]
+  );
 
   // Update drag constraints when filtered recruiters change or on resize
   useEffect(() => {
@@ -46,7 +49,7 @@ const Recruiters = () => {
     updateConstraints();
     window.addEventListener('resize', updateConstraints);
     return () => window.removeEventListener('resize', updateConstraints);
-  }, [filteredRecruiters]);
+  }, [filteredRecruiters.length]);
 
   useEffect(() => {
     dispatch(fetchRecruiters());

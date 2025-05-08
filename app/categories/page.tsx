@@ -1,23 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, Search, Menu } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import CategorySidebar from "@/components/layout/category-sidebar";
 
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { fetchCategories } from "@/store/reducers/categorySlice";
 import { fetchPrograms } from "@/store/reducers/programSlice";
-import JobPostingDialog from "@/components/dialog/jobposting-dialog";
-import { ApplyJobDialog } from "@/components/dialog/applyjob-dialog";
 
 export default function Categories() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const categoriesState = useAppSelector((state) => state.categories);
   const programsState = useAppSelector((state) => state.programs);
@@ -31,27 +27,7 @@ export default function Categories() {
   const programs = programsState.items;
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const toggleCategory = (categoryName: string) => {
-    setExpandedCategories(prev =>
-      prev.includes(categoryName)
-        ? prev.filter(name => name !== categoryName)
-        : [...prev, categoryName]
-    );
-  };
-
-  const [showJobPosting, setShowJobPosting] = useState(false);
-  const [showApplyJob, setShowApplyJob] = useState(false);
-  const handleJobPosting = () => {
-    setShowJobPosting(true);
-  };
-  const handleApplyJob = () => {
-    setShowApplyJob(true);
-  }
-  const handleProgramClick = (category: string, program: string) => {
-    // Implementation of handleProgramClick 
+    setIsSidebarOpen(false);
   };
 
   const handleContentClick = () => {
@@ -60,10 +36,7 @@ export default function Categories() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-      <Header
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
+      <Header />
       {/* Add overlay for mobile/tablet */}
       {isSidebarOpen && (
         <div
@@ -73,11 +46,6 @@ export default function Categories() {
       )}
       <div className="pt-20">
         <div className="flex flex-col xl:flex-row w-full relative min-h-[calc(100vh-5rem)]">
-          <CategorySidebar
-            isSidebarOpen={isSidebarOpen}
-            onShowJobPosting={handleJobPosting}
-            onShowApplyJob={handleApplyJob}
-          />
           <div
             className="flex-1 xl:ml-64 p-4 xl:p-6"
             onClick={handleContentClick}
@@ -158,15 +126,6 @@ export default function Categories() {
         </div>
       </div>
       <Footer />
-      <JobPostingDialog
-        open={showJobPosting}
-        onOpenChange={setShowJobPosting}
-      />
-
-      <ApplyJobDialog
-        open={showApplyJob}
-        onOpenChange={setShowApplyJob}
-      />
     </div>
   );
 }

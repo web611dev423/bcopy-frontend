@@ -1,4 +1,5 @@
 import api from '../api';
+import { initializeSocket } from '../socket';
 
 interface LoginCredentials {
   email: string;
@@ -32,6 +33,7 @@ export const authService = {
         localStorage.setItem('userData', JSON.stringify(response.data.user));
         localStorage.setItem('userType', credentials.userType);
       }
+      initializeSocket(response.data.user.id);
       return response.data;
     } catch (error: any) {
       throw error.response?.data || error.message;
@@ -39,7 +41,6 @@ export const authService = {
   },
 
   async register(data: RegisterData) {
-    console.log(data);
     try {
       const response = await api.post("/api/auth/register", data);
       if (response.data.token) {
@@ -57,6 +58,5 @@ export const authService = {
     localStorage.removeItem('token');
     localStorage.removeItem('userData');
     localStorage.removeItem('userType');
-    window.location.href = '/login';
   }
 }; 

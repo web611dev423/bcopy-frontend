@@ -18,13 +18,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { authService } from "@/lib/services/authService";
 
 
 type AuthMode = "login" | "register";
 
 export default function AuthForm() {
+
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("login");
   const [userType, setUserType] = useState<"user" | "recruiter">("recruiter");
@@ -63,7 +63,7 @@ export default function AuthForm() {
           ...formData,
           userType: userType,
         }).then(() => {
-          window.location.href = "/";
+          router.push('/');
         });
 
       }

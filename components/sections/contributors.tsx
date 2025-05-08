@@ -1,5 +1,5 @@
 import ProfileCard from "../custom/profile-card";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
@@ -8,34 +8,40 @@ import { fetchContributors } from "@/store/reducers/contributorSlice";
 import { useAuth } from "@/hooks/useAuth";
 
 const Contributors = () => {
-
   const { isAuthenticated, user } = useAuth();
-
   const dispatch = useAppDispatch();
   const { items, loading, error } = useAppSelector((state) => state.contributors);
-
 
   useEffect(() => {
     dispatch(fetchContributors());
   }, [dispatch]);
+
   const [selectedCountry, setSelectedCountry] = useState<string>("all");
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if ((isAuthenticated && user?.country))
+    if (isAuthenticated && user?.country) {
       setSelectedCountry(user.country);
-    else
+    } else {
       setSelectedCountry('all');
-  }, [isAuthenticated, user])
+    }
+  }, [isAuthenticated, user]);
 
   // Get unique countries
-  const countries = ["all", ...Array.from(new Set(items.map(c => c.country)))];
+  const countries = useMemo(() =>
+    ["all", ...Array.from(new Set(items.map(c => c.country)))],
+    [items]
+  );
 
   // Filter contributors based on selected country
-  const filteredContributors = selectedCountry === "all"
-    ? items
-    : items.filter(c => c.country === selectedCountry);
+  const filteredContributors = useMemo(() =>
+    selectedCountry === "all"
+      ? items
+      : items.filter(c => c.country === selectedCountry),
+    [items, selectedCountry]
+  );
 
   // Update drag constraints when filtered contributors change or on resize
   useEffect(() => {
@@ -53,7 +59,10 @@ const Contributors = () => {
     updateConstraints();
     window.addEventListener('resize', updateConstraints);
     return () => window.removeEventListener('resize', updateConstraints);
-  }, [filteredContributors]);
+  }, [filteredContributors.length]); // Only depend on length changes
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-md w-full">
@@ -77,7 +86,8 @@ const Contributors = () => {
           dragConstraints={dragConstraints}
           dragElastic={0}
           dragMomentum={false}
-          className="flex space-x-4 cursor-grab active:cursor-grabbing">
+          className="flex space-x-4 cursor-grab active:cursor-grabbing"
+        >
           <div ref={scrollRef} className="flex gap-2 min-w-max">
             {filteredContributors.map((contributor) => (
               <ProfileCard
@@ -95,4 +105,4 @@ const Contributors = () => {
   );
 };
 
-export default Contributors; 
+export default Contributors;
