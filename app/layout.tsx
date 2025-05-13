@@ -1,7 +1,8 @@
 
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter, Roboto_Mono } from 'next/font/google';
+// import { Inter } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 import { Providers } from '@/store/provider';
 import { AuthProvider } from '@/context/AuthContext';
 import { SocketProvider } from '@/context/SocketContext';
@@ -9,15 +10,12 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from 'next-themes';
 
 // Load Geist font (replacing Inter)
-const geistSans = Inter({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
+// const geistSans = Inter({
+//   variable: '--font-geist-sans',
+//   subsets: ['latin'],
+// });
 
-const geistMono = Roboto_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+
 
 export const metadata: Metadata = {
   title: '<Be>Copy',
@@ -31,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={`${GeistSans.className} font-sans antialiased`}>
         <ThemeProvider defaultTheme="light" enableSystem attribute="class">
           <AuthProvider>
             <SocketProvider>
