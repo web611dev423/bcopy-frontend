@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Users, User, BookOpen } from 'lucide-react';
 import { QuizInvitation as QuizInvitationType } from '@/lib/types';
-import { respondToQuizInvitation } from '@/lib/socket';
+import { useSocket } from '@/context/SocketContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -34,10 +34,12 @@ export default function QuizInvitation({
   const dispatch = useAppDispatch();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { user } = useAuth();
+  const { emitEvent } = useSocket();
   const handleResponse = async (status: 'accepted' | 'declined') => {
     try {
       if (quizId && quizId !== '')
-        respondToQuizInvitation(quizId, status);
+        emitEvent('quiz:invitation:response', { quizId, status });
+      // respondToQuizInvitation(quizId, status);
       toast({
         title: status === 'accepted' ? 'Invitation Accepted' : 'Invitation Declined',
         description: status === 'accepted'

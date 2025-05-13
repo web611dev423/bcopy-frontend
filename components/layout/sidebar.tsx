@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Router, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 
@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchCategories } from "@/store/reducers/categorySlice";
 import { fetchPrograms } from "@/store/reducers/programSlice";
 import { Program } from "@/types";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -32,7 +33,7 @@ const Sidebar = ({
   onShowJobPosting,
   onShowApplyJob
 }: SidebarProps) => {
-
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -105,7 +106,7 @@ const Sidebar = ({
           <div className="flex justify-center">
             <Button
               className="text-[#0284DA] outline-hidden bg-white hover:bg-white hover:text-[#0284FF]"
-              onClick={() => window.location.assign('/categories')}
+              onClick={() => router.push('/codes')}
             >
               Browse All
             </Button>

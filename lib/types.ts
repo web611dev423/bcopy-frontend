@@ -68,7 +68,9 @@ export type SocketEvent =
   | 'quiz:invitation:response'
   | 'quiz:start'
   | 'quiz:complete'
-  | 'quiz:all_complete';
+  | 'quiz:all_complete'
+  | 'quiz:user_started'
+  | 'quiz:user_completed';
 
 export interface SocketPayload {
   type: SocketEvent;

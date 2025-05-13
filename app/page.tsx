@@ -1,32 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import CodeCard from "@/components/custom/code-card";
 import ChatGPTCard from "@/components/custom/chatgpt-card";
-
+import CodeDialog from "@/components/dialog/code-dialog";
+import FeedbackDialog from "@/components/dialog/feedback-dialog";
+import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
-import CodeDialog from "@/components/dialog/code-dialog";
-import FeedbackDialog from "@/components/dialog/feedback-dialog";
+import { HELLO_DEVELOPER } from "@/constants";
+import { Program } from "@/types";
 
-import { ARTICLES, LANGUAGES, HELLO_DEVELOPER } from "@/constants";
-import Sidebar from "@/components/layout/sidebar";
-
-import Recruiters from "@/components/sections/recruiters";
-import Contributors from "@/components/sections/contributors";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { viewProgram, copyProgram } from "@/store/reducers/programSlice";
+import Contributors from "@/components/sections/contributors";
+import Recruiters from "@/components/sections/recruiters";
+import QuizScorers from "@/components/sections/quiz-scorers";
+
 import { fetchCategories } from "@/store/reducers/categorySlice";
 import { fetchDashboardString } from "@/store/reducers/dashStringSlice";
-import { Fascinate } from "next/font/google";
-import { Program } from "@/types";
-import { copyProgram, viewProgram } from "@/store/reducers/programSlice";
-import { savedContributions } from "@/store/reducers/contributionSlice";
+
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
 
 export default function Home() {
   const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -215,12 +214,15 @@ export default function Home() {
               <div className="col-span-1 mb-4 sm:mb-0">
                 <ChatGPTCard language={selectedLanguage} clickFunc={setSelectedLanguage} showDialog={setShowDialog} />
               </div>
-              <div className="col-span-2 space-y-2 grid grid-rows-2 justify-stretch">
-                <div className="w-full overflow-x-auto">
+              <div className="col-span-2 space-y-2 justify-stretch">
+                <div className="w-full overflow-x-auto row-1">
                   <Contributors />
                 </div>
-                <div className="w-full overflow-x-auto">
+                <div className="w-full overflow-x-auto row-1">
                   <Recruiters />
+                </div>
+                <div className="w-full overflow-x-auto row-1">
+                  <QuizScorers />
                 </div>
               </div>
             </div>

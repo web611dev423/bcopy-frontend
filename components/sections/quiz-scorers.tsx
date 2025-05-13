@@ -1,44 +1,36 @@
-import ProfileCard from "../custom/profile-card";
-import { useState, useRef, useEffect, useMemo } from "react";
+'use client';
+
+import { useEffect, useState, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { fetchRecruiters } from "@/store/reducers/recruiterSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchQuizScorerList } from "@/store/reducers/quizSlice";
+import ProfileCard from "../custom/profile-card";
+import { ExternalLink, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "../ui/button";
-import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
-interface RecruitersProps {
-  recruiters: any[];
-}
-
-const Recruiters = () => {
+const QuizScorers = () => {
   const dispatch = useAppDispatch();
   const { isAuthenticated, user } = useAuth();
-  const { items, loading, error } = useAppSelector((state) => state.recruiters);
-  const [selectedCountry, setSelectedCountry] = useState<string>("all");
-  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
+  const { scorers, loading } = useAppSelector(state => state.quizzes);
+  const [selectedCountry, setSelectedCountry] = useState("all");
+  const router = useRouter();
+  // For horizontal scrolling
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
 
   useEffect(() => {
-    if ((isAuthenticated && user?.country))
+    dispatch(fetchQuizScorerList());
+  }, [dispatch]);
+  useEffect(() => {
+    if (isAuthenticated && user?.country) {
       setSelectedCountry(user.country);
-    else
+    } else {
       setSelectedCountry('all');
-  }, [isAuthenticated, user])
-  // Get unique countries
-  const countries = ["all", ...Array.from(new Set(items.map(r => r.country)))];
+    }
+  }, [isAuthenticated, user]);
 
-  // Filter recruiters based on selected country
-  const filteredRecruiters = useMemo(() =>
-    selectedCountry === "all"
-      ? items
-      : items.filter(c => c.country === selectedCountry),
-    [items, selectedCountry]
-  );
-
-  // Update drag constraints when filtered recruiters change or on resize
   useEffect(() => {
     const updateConstraints = () => {
       if (containerRef.current && scrollRef.current) {
@@ -54,20 +46,33 @@ const Recruiters = () => {
     updateConstraints();
     window.addEventListener('resize', updateConstraints);
     return () => window.removeEventListener('resize', updateConstraints);
-  }, [filteredRecruiters.length]);
+  }, [scorers.length]);
 
-  useEffect(() => {
-    dispatch(fetchRecruiters());
-  }, [dispatch]);
+  // Get unique countries from scorers
+  const countries = ["all", ...Array.from(new Set(
+    scorers
+      ?.filter(scorer => scorer.country)
+      .map(scorer => scorer.country)
+  ))];
+
+  // Filter contributors based on selected country
+  const filteredScorers = useMemo(() =>
+    selectedCountry === "all"
+      ? scorers
+      : scorers.filter(c => c.country === selectedCountry),
+    [scorers, selectedCountry]
+  );
   if (loading) return (
     <div className="flex justify-center items-center h-64">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>)
-  if (error) return <div>Error: {error}</div>;
   return (
     <div className="bg-white rounded-lg pl-2 shadow-md w-full">
       <div className="flex justify-between items-center">
-        <h3 className="font-semibold">Top Recruiters</h3>
+        <h3 className="font-semibold flex items-center">
+          {/* <Trophy className="h-4 w-4 mr-2 text-yellow-500" /> */}
+          Top Quiz Scorers
+        </h3>
         <div className="justify-right">
           <select
             value={selectedCountry}
@@ -94,17 +99,25 @@ const Recruiters = () => {
           dragConstraints={dragConstraints}
           dragElastic={0}
           dragMomentum={false}
-          className="flex space-x-4 cursor-grab active:cursor-grabbing">
+          className="flex space-x-4 cursor-grab active:cursor-grabbing"
+        >
           <div ref={scrollRef} className="flex gap-2 min-w-max">
-            {filteredRecruiters.map((recruiter) => (
-              <ProfileCard
-                key={recruiter._id}
-                title={recruiter.companyName}
-                subtitle={recruiter.positions.length + " open positions"}
-                country={recruiter.country}
-                image={""}
-              />
-            ))}
+            {filteredScorers.length > 0 ? (
+              filteredScorers.map((scorer) => (
+                <ProfileCard
+                  key={scorer._id}
+                  title={scorer.name}
+                  subtitle={`Score: ${scorer.quizScore || 0}`}
+                  country={scorer.country}
+                  image={""}
+                // icon={<Trophy className="h-3 w-3 text-yellow-500" />}
+                />
+              ))
+            ) : (
+              <div className="flex items-center justify-center w-full py-4 text-gray-500">
+                No quiz scorers found
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
@@ -112,4 +125,4 @@ const Recruiters = () => {
   );
 };
 
-export default Recruiters; 
+export default QuizScorers;

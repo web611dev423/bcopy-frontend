@@ -8,13 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { UserPlus, X, Users } from 'lucide-react';
-
+import { useSocket } from '@/context/SocketContext';
 import { Quiz } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 
-import { sendQuizInvitation } from '@/lib/socket';
 
 type ChallengeFriendsProps = {
   userId: string;
@@ -38,7 +37,7 @@ export default function ChallengeFriends({ userId, quiz, onChallengeComplete, op
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const { toast } = useToast();
-
+  const { emitEvent } = useSocket();
   // Filter users based on search term
   const filteredUsers = scorers?.filter(user =>
     user._id !== userId && user.connected === true &&// Don't show current user
@@ -79,8 +78,8 @@ export default function ChallengeFriends({ userId, quiz, onChallengeComplete, op
 
     try {
 
-      sendQuizInvitation(quiz._id, selectedUsers);
-
+      emitEvent('quiz:invitation', { quizId: quiz._id, inviteeIds: selectedUsers });
+      // sendQuizInvitation(quiz._id, selectedUsers);
       toast({
         title: 'Challenge Sent',
         description: `Invited ${selectedUsers.length} user${selectedUsers.length > 1 ? 's' : ''} to the quiz`,

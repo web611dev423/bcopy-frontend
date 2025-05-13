@@ -22,8 +22,7 @@ import QuizTaker from './QuizTaker';
 import QuizResults from './QuizResults';
 import ChallengeFriends from './ChallengeFriends';
 import { Quiz, QuizInvitation as QuizInvitationType } from '@/lib/types';
-import { useQuiz } from '@/hooks/useQuiz';
-import { subscribeToEvent } from '@/lib/socket';
+import { useSocket } from '@/context/SocketContext';
 import { fetchQuizScorerList, fetchUserQuizees } from '@/store/reducers/quizSlice';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 
@@ -33,19 +32,21 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 
 import { fetchQuizInvitations } from '@/store/reducers/quizSlice';
-import { StepId } from 'framer-motion';
+
 
 export default function DashboardPage() {
   const { isAuthenticated, user } = useAuth();
   const dispatch = useAppDispatch();
-  const rotuer = useRouter();
+  const router = useRouter();
   const userQuizzes = useAppSelector((state) => state.quizzes.quizzes);
   const invitations = useAppSelector((state) => state.quizzes.quizInvitations);
   const scorers = useAppSelector((state) => state.quizzes.scorers);
-  const { createNewQuiz, loading, loadQuiz } = useQuiz(user?.id || '');
   const [activeView, setActiveView] = useState<string>('quizzes');
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [quizState, setQuizState] = useState<'creating' | 'inviting' | 'taking' | 'results' | null>(null);
+
+  // Use the socket context instead of direct socket functions
+  const { subscribeToEvent } = useSocket();
 
   useEffect(() => {
     if (isAuthenticated && user && user.id !== '') {
@@ -66,7 +67,6 @@ export default function DashboardPage() {
   }
 
   const handleInvitedQuizStart = async (quizId: string) => {
-    alert(quizId);
     const quiz = await invitations.filter((q) => q._id === quizId)[0];
 
     if (quiz) {
@@ -78,9 +78,7 @@ export default function DashboardPage() {
   // Initialize socket connection and fetch pending invitations
   useEffect(() => {
     if (isAuthenticated && user) {
-      // initializeSocket(user.id); // Ensure socket is initialized
       const unsubscribe = subscribeToEvent('quiz:invitation', (data) => {
-        console.log('Received quiz invitation:', data);
         if (isAuthenticated) {
           dispatch(fetchQuizInvitations(user.id));
         }
@@ -90,7 +88,7 @@ export default function DashboardPage() {
         unsubscribe();
       };
     }
-  }, [isAuthenticated, user, dispatch]);
+  }, [isAuthenticated, user, dispatch, subscribeToEvent]);
 
   // Handle quiz creation
   const handleQuizCreated = (quiz: Quiz) => {
@@ -163,9 +161,9 @@ export default function DashboardPage() {
   return (<>
     <Header />
     <div className="flex w-full justify-center min-h-screen pt-12 p-4">
-      <div className="container max-w-4xl py-8 w-full">
+      <div className="container max-w-8xl py-8 w-full">
         {quizState === 'taking' && selectedQuiz && (
-          <div className="container max-w-4xl py-8">
+          <div className="container max-w-full py-8 flex justify-center">
             <QuizTaker
               userId={user?.id || ''}
               quiz={selectedQuiz}
@@ -176,10 +174,7 @@ export default function DashboardPage() {
         )}
 
         {quizState === 'results' && selectedQuiz && (
-          <div className="container max-w-4xl py-8">
-            {/* <Button variant="outline" onClick={handleGoHome} className="mb-6">
-              Back to Dashboard
-            </Button> */}
+          <div className="container max-w-full py-8 flex justify-center">
             <QuizResults
               userId={user?.id || ''}
               quiz={selectedQuiz}
@@ -208,7 +203,7 @@ export default function DashboardPage() {
               </Button>
             </div>
           </div><Tabs defaultValue="quizzes" value={activeView} onValueChange={setActiveView}>
-              <TabsList className="grid grid-cols-4 mb-8">
+              <TabsList className="grid grid-cols-3 mb-8">
                 <TabsTrigger value="quizzes" className="flex items-center">
                   <Trophy className="h-4 w-4 mr-2" />
                   My Quizzes
@@ -226,15 +221,15 @@ export default function DashboardPage() {
                     </Badge>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="history" className="flex items-center">
+                {/* <TabsTrigger value="history" className="flex items-center">
                   <Calendar className="h-4 w-4 mr-2" />
                   History
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
 
               <TabsContent value="quizzes" className="mt-0">
                 {userQuizzes && userQuizzes.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                     {userQuizzes.map((quiz) => (
                       <Card key={quiz._id} className="overflow-hidden">
                         <CardHeader className="pb-3">
@@ -258,10 +253,10 @@ export default function DashboardPage() {
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="pt-2 border-t">
+                        <CardFooter className="pt-2 border-t flex justify-between space-x-2 grid grid-cols-2">
                           <Button
                             variant="default"
-                            className="w-full"
+                            className='col-span-1'
                             disabled={IsUserQuizStarted(quiz)}
                             onClick={() => { handleQuizStart(quiz._id); }}
                           >
@@ -269,7 +264,7 @@ export default function DashboardPage() {
                           </Button>
                           <Button
                             variant="secondary"
-                            className="w-full"
+                            className='col-span-1'
                             disabled={!IsUserQuizStarted(quiz)}
                             onClick={() => { handleViewResult(quiz); }}
                           >
@@ -299,9 +294,10 @@ export default function DashboardPage() {
 
               <TabsContent value="invitedquizzes" className="mt-0">
                 {invitations && invitations.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                     {invitations.map((quiz) => (
-                      getUserInvitationStatus(quiz) == 'accepted' &&
+                      (getUserInvitationStatus(quiz) == 'accepted' || 'completed') &&
+                      quiz.creatorId !== user?.id &&
                       <Card key={quiz._id} className="overflow-hidden">
                         <CardHeader className="pb-3">
                           <div className="flex justify-between items-start">
@@ -324,7 +320,7 @@ export default function DashboardPage() {
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="pt-2 border-t">
+                        <CardFooter className="pt-2 border-t flex justify-between space-x-2 grid grid-cols-2">
                           <Button
                             variant="default"
                             className="w-full"
@@ -348,9 +344,9 @@ export default function DashboardPage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="invitations" className="mt-0">
+              <TabsContent value="invitations">
                 {invitations.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="flex grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                     {invitations.map((invitation) => (
                       getUserInvitationStatus(invitation) == 'pending' && <QuizInvitation
                         key={invitation._id}
@@ -375,7 +371,7 @@ export default function DashboardPage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="history" className="mt-0">
+              {/* <TabsContent value="history" className="mt-0">
                 <Card>
                   <CardHeader>
                     <CardTitle>Quiz History</CardTitle>
@@ -386,7 +382,6 @@ export default function DashboardPage() {
                   <CardContent>
                     <ScrollArea className="h-[400px]">
                       <div className="space-y-4">
-                        {/* This would be populated with actual history data in a real app */}
                         <div className="p-4 text-center text-muted-foreground">
                           No quiz history yet. Complete a quiz to see your results here.
                         </div>
@@ -394,7 +389,7 @@ export default function DashboardPage() {
                     </ScrollArea>
                   </CardContent>
                 </Card>
-              </TabsContent>
+              </TabsContent> */}
             </Tabs></>)}
       </div>
     </div >

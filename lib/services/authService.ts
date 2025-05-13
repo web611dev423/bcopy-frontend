@@ -1,5 +1,4 @@
 import api from '../api';
-import { initializeSocket } from '../socket';
 
 interface LoginCredentials {
   email: string;
@@ -33,7 +32,6 @@ export const authService = {
         localStorage.setItem('userData', JSON.stringify(response.data.user));
         localStorage.setItem('userType', credentials.userType);
       }
-      initializeSocket(response.data.user.id);
       return response.data;
     } catch (error: any) {
       throw error.response?.data || error.message;

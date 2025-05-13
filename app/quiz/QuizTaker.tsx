@@ -9,13 +9,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Clock, AlertCircle } from 'lucide-react';
-import { useQuiz } from '@/hooks/useQuiz';
 import { Quiz, Question } from '@/lib/types';
 import { decode } from 'html-entities';
 import { useAuth } from '@/hooks/useAuth';
-import api from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
-
+import { useAppDispatch } from '@/store/hooks';
+import { submitQuizResult } from '@/store/reducers/quizSlice';
+import { useSocket } from '@/context/SocketContext';
 
 type QuizTakerProps = {
   userId: string;
@@ -25,8 +25,7 @@ type QuizTakerProps = {
 };
 
 export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTakerProps) {
-  const { user } = useAuth()
-  const { startQuiz } = useQuiz(user?.id || '');
+  const { user } = useAuth();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [startTime, setStartTime] = useState<string | null>(null);
@@ -39,12 +38,27 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
   const currentQuestion = quiz.questions[currentQuestionIndex];
   const totalQuestions = quiz.questions.length;
   const progress = (currentQuestionIndex / totalQuestions) * 100;
-
+  const dispatch = useAppDispatch();
+  const { emitEvent } = useSocket();
   // Reset to home view
 
   // Initialize the quiz and start timer
   const handleStartQuiz = () => {
-    const time = startQuiz(quiz._id);
+    const time = new Date().toISOString();
+    emitEvent('quiz:start', { quizId: quiz._id, userId, time });
+
+    try {
+      toast({
+        title: 'Quiz Started',
+        description: 'Your timer has started. Good luck!',
+      });
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'Failed to start quiz',
+        variant: 'destructive',
+      });
+    }
     if (time) {
       setStartTime(time);
       setQuizStarted(true);
@@ -129,7 +143,12 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
     });
 
     if (startTime) {
-      await api.post('/api/quiz/submit', {
+      emitEvent('quiz:complete', {
+        userId,
+        quizId: quiz._id,
+        completedAt: new Date().toISOString()
+      });
+      await dispatch(submitQuizResult({
         userId,
         quizId: quiz._id,
         score,
@@ -137,14 +156,11 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
         startedAt: startTime,
         completedAt: new Date().toISOString(),
         timeElapsedMs: elapsedTime
-      })
-        .then(() => {
-          toast({
-            title: 'Quiz Completed',
-            description: `You scored ${score}/${totalQuestions} in ${formatTime(elapsedTime)}`,
-          });
-        })
-
+      }));
+      toast({
+        title: 'Quiz Completed',
+        description: `You scored ${score}/${totalQuestions} in ${formatTime(elapsedTime)}`,
+      });
       onComplete();
     }
   };
@@ -161,7 +177,7 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
   // If quiz hasn't started, show start screen
   if (!quizStarted) {
     return (
-      <Card className="w-full max-w-3xl">
+      <Card className="w-full max-w-2xl place-self-center">
         <CardHeader>
           <CardTitle className="text-2xl">{quiz.title}</CardTitle>
           <CardDescription>{quiz.description}</CardDescription>
@@ -199,7 +215,7 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
             </div>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className='space-x-4'>
           <Button onClick={handleStartQuiz} className="w-full">
             Start Quiz
           </Button>
@@ -215,13 +231,21 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
     <Card className="w-full max-w-3xl">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-center mb-2">
-          <Badge variant="outline" className="px-2 py-1">
-            Question {currentQuestionIndex + 1} of {totalQuestions}
-          </Badge>
+          <div>
+            <CardTitle className="text-xl mb-1">{quiz.title}</CardTitle>
+            {quiz.description && (
+              <CardDescription className="text-sm">{quiz.description}</CardDescription>
+            )}
+          </div>
           <div className="flex items-center gap-1 text-sm font-medium">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span>{formatTime(elapsedTime)}</span>
           </div>
+        </div>
+        <div className="flex justify-between items-center mt-4 mb-2">
+          <Badge variant="outline" className="px-2 py-1">
+            Question {currentQuestionIndex + 1} of {totalQuestions}
+          </Badge>
         </div>
         <Progress value={progress} className="h-2" />
       </CardHeader>
@@ -263,15 +287,16 @@ export default function QuizTaker({ userId, quiz, onComplete, onGoHome }: QuizTa
       </CardContent>
       <CardFooter className="flex justify-between pt-6 border-t">
         <Button
-          variant="outline"
           disabled={currentQuestionIndex === 0}
           onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
+          className='w-48'
         >
           Previous
         </Button>
         <Button
           onClick={handleNextQuestion}
           disabled={!selectedAnswers[currentQuestionIndex]}
+          className='w-48'
         >
           {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
         </Button>

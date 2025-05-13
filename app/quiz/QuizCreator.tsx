@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,11 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useQuiz } from '@/hooks/useQuiz';
 import { Quiz } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { createNewQuiz } from '@/store/reducers/quizSlice';
+
 type QuizCreatorProps = {
   userId: string;
   open: boolean;
@@ -22,37 +22,41 @@ type QuizCreatorProps = {
 };
 
 export default function QuizCreator({ onQuizCreated, open, onOpenChange }: QuizCreatorProps) {
-  const { user } = useAuth()
-  const { createNewQuiz, loading } = useQuiz(user?.id || '');
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [mode, setMode] = useState<'direct' | 'group' | 'solo'>('solo');
-  const [questionCount, setQuestionCount] = useState(10);
+  const [questionCount, setQuestionCount] = useState('10');
   const [category, setCategory] = useState<string>('18');
   const [difficulty, setDifficulty] = useState<string>('anyDifficulty');
   const [questionType, setQuestionType] = useState<string>('anyType');
-
+  const currentQuiz = useAppSelector(state => state.quizzes.currentQuiz);
+  const loading = useAppSelector(state => state.quizzes.loading);
 
   const handleCreateQuiz = async () => {
     if (!title) {
       return;
     }
-    const newQuiz = await createNewQuiz(
+    const quiz = {
+      amount: parseInt(questionCount, 10),
+      category: 18,
+      difficulty,
+      type: questionType,
+      creatorId: user?.id,
+      participants: [{ userId: user?.id, status: 'accepted' }],
+      createdAt: new Date().toISOString(),
+      mode,
       title,
       description,
-      mode,
-      {
-        amount: questionCount,
-        category: 18,
-        difficulty: difficulty !== 'anyDifficulty' ? difficulty as 'easy' | 'medium' | 'hard' : undefined,
-        type: questionType !== 'anyType' ? questionType as 'multiple' | 'boolean' : undefined,
-      }
-    );
-
-    if (newQuiz) {
-      onQuizCreated(newQuiz.data);
     }
+    await dispatch(createNewQuiz(quiz));
   };
+  useEffect(() => {
+    if (currentQuiz) {
+      onQuizCreated(currentQuiz);
+    }
+  }, [currentQuiz])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -121,15 +125,22 @@ export default function QuizCreator({ onQuizCreated, open, onOpenChange }: QuizC
               <h3 className="text-lg font-medium">Questions Configuration</h3>
 
               <div className="space-y-2">
-                <Label>Number of Questions: {questionCount}</Label>
-                <Slider
-                  min={5}
-                  max={20}
-                  step={1}
-                  value={[questionCount]}
-                  onValueChange={(value) => setQuestionCount(value[0])}
-                />
-
+                <Label htmlFor="questionCount">Number of Questions</Label>
+                <Select value={questionCount} onValueChange={setQuestionCount}>
+                  <SelectTrigger id="questionCount" className="focus:outline-none focus:ring-0 focus:ring-offset-0">
+                    <SelectValue placeholder="Select number of questions" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5 Questions</SelectItem>
+                    <SelectItem value="10">10 Questions</SelectItem>
+                    <SelectItem value="15">15 Questions</SelectItem>
+                    <SelectItem value="20">20 Questions</SelectItem>
+                    <SelectItem value="25">25 Questions</SelectItem>
+                    <SelectItem value="30">30 Questions</SelectItem>
+                    <SelectItem value="40">40 Questions</SelectItem>
+                    <SelectItem value="50">50 Questions</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">

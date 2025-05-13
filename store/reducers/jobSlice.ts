@@ -4,12 +4,14 @@ import api from '@/lib/api';
 // Define your data types
 interface JobState {
   items: any[];
+  selectedJob: any;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: JobState = {
   items: [],
+  selectedJob: null,
   loading: false,
   error: null,
 };
@@ -19,6 +21,14 @@ export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
   async () => {
     const response = await api.get('/api/jobs');
+    return response.data;
+  }
+);
+
+export const fetchJobById = createAsyncThunk(
+  'jobs/fetchJobById',
+  async (id: string) => {
+    const response = await api.get(`/api/jobs/${id}`);
     return response.data;
   }
 );
@@ -46,6 +56,19 @@ const jobSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchJobs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchJobById.pending, (state) => {
+        state.loading = true;
+        state.selectedJob = null;
+      })
+      .addCase(fetchJobById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedJob = action.payload.data;
+        state.error = null;
+      })
+      .addCase(fetchJobById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       })

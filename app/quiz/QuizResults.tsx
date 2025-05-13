@@ -31,9 +31,10 @@ import {
   ResponsiveContainer,
   Tooltip
 } from 'recharts';
-import { useQuiz } from '@/hooks/useQuiz';
 import { QuizResult, Quiz } from '@/lib/types';
 import { useAuth } from '@/hooks/useAuth';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchQuizResults } from '@/store/reducers/quizSlice';
 type QuizResultsProps = {
   userId: string;
   quiz: Quiz;
@@ -48,54 +49,36 @@ interface UserResult extends QuizResult {
 
 export default function QuizResults({ userId, quiz, onPlayAgain, onGoHome }: QuizResultsProps) {
   const { user } = useAuth();
-  const { fetchQuizResults } = useQuiz(user?.id || ''); // Removed `userId` from `useQuiz` hook
-  const [results, setResults] = useState<UserResult[]>([]);
+  const { results, loading, scorers } = useAppSelector(state => state.quizzes);
+  const [sortedResults, setSortedResults] = useState<UserResult[]>([]);
   const [userResult, setUserResult] = useState<UserResult | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
+  const dispatch = useAppDispatch();
   const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
 
-  // Fetch results on component mount
   useEffect(() => {
-    const loadResults = async () => {
-      try {
-        setLoading(true);
-        const quizResults: any[] = await fetchQuizResults(quiz._id); // Added type for `quizResults`
-        if (!quizResults) {
-          console.error('No quiz results found');
-          return;
-        } else {
-          console.log("quizResults", quizResults);
-        }
-        // Sort results by time elapsed (fastest first)
-        const sortedResults: any[] = quizResults
-          .sort((a, b) => {
-            // First sort by score (highest first)
-            if (b.score !== a.score) return b.score - a.score;
-            // Then by time (fastest first)
-            return a.timeElapsedMs - b.timeElapsedMs;
-          })
-          .map((participant, index) => ({
-            ...participant.result,
-            userId,
-            username: `User ${index + 1}`, // In a real app, fetch usernames
-            rank: index + 1
-          }));
+    if (quiz)
+      dispatch(fetchQuizResults(quiz._id));
+  }, [dispatch, quiz._id]);
 
-        setResults(sortedResults);
-        console.log("sortedResults", sortedResults)
-        // Find current user's result
-        const currentUserResult = sortedResults.find(r => r.userId === userId) || null;
-        setUserResult(currentUserResult);
-      } catch (error) {
-        console.error('Error loading results:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
+    if (results && results.length > 0) {
+      const tempResults = [...results]
+        .sort((a, b) => {
+          if (b.result.score !== a.result.score) return b.result.score - a.result.score;
+          return a.result.timeElapsedMs - b.result.timeElapsedMs;
+        })
+        .map((resultItem, index) => ({
+          ...resultItem.result,
+          userId: resultItem.userId,
+          username: scorers.find(scorer => scorer._id === resultItem.userId)?.name || 'Unknown',
+          rank: index + 1
+        }));
 
-    loadResults();
-  }, [quiz._id, userId]);
+      setSortedResults(tempResults);
+      const currentUserResult = tempResults.find(r => r.userId === userId) || null;
+      setUserResult(currentUserResult);
+    }
+  }, [results, scorers, userId]);
 
   // Calculate stats for charts
   const calculatePieData = (): { name: string; value: number }[] => {
@@ -112,11 +95,12 @@ export default function QuizResults({ userId, quiz, onPlayAgain, onGoHome }: Qui
   const calculateRankDistribution = (): { name: string; value: number }[] => {
     const distribution: Record<string, number> = {};
 
-    results.forEach(result => {
-      const scoreKey = `${result.score}/${result.totalQuestions}`;
-      distribution[scoreKey] = (distribution[scoreKey] || 0) + 1;
-    });
-
+    if (sortedResults && sortedResults.length > 0) {
+      sortedResults.forEach(result => {
+        const scoreKey = `${result.score}/${result.totalQuestions}`;
+        distribution[scoreKey] = (distribution[scoreKey] || 0) + 1;
+      });
+    }
     return Object.entries(distribution).map(([name, value]) => ({
       name,
       value,
@@ -231,7 +215,7 @@ export default function QuizResults({ userId, quiz, onPlayAgain, onGoHome }: Qui
                 </h3>
 
                 <div className="space-y-3">
-                  {results.map((result, index) => (
+                  {sortedResults && sortedResults.length > 0 && sortedResults.map((result, index) => (
                     <div
                       key={result.userId} // Changed key to `userId` for uniqueness
                       className={`flex items-center justify-between p-3 rounded-md ${result.userId === userId
@@ -251,13 +235,15 @@ export default function QuizResults({ userId, quiz, onPlayAgain, onGoHome }: Qui
                         <div>
                           <p className="font-medium text-sm">{result.username}</p>
                           <p className="text-xs text-muted-foreground">
-                            Score: {result.score}/{result.totalQuestions}
+                            {
+                              result.totalQuestions ? `Score: ${result.score}/${result.totalQuestions}` : "Not started"
+                            }
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1 text-sm">
                         <Clock className="h-3 w-3 text-muted-foreground" />
-                        <span>{formatTime(result.timeElapsedMs)}</span>
+                        <span>{formatTime(result.timeElapsedMs ? result.timeElapsedMs : 0)}</span>
                       </div>
                     </div>
                   ))}
@@ -334,16 +320,6 @@ export default function QuizResults({ userId, quiz, onPlayAgain, onGoHome }: Qui
             <CircleArrowLeft className="h-4 w-4 mr-2" />
             Go Back
           </Button>
-          {/* 
-          <Button variant="outline" onClick={onPlayAgain} className="flex-1">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Play Again
-          </Button>
-
-          <Button variant="default" className="flex-1">
-            <Share2 className="h-4 w-4 mr-2" />
-            Share Results
-          </Button> */}
         </div>
       </CardContent>
     </Card>

@@ -1,4 +1,5 @@
-import { Check, Dot, Twitter, Menu, LogOut, ChevronDown } from "lucide-react"
+
+import { Check, Dot, MessageCircle, Menu, LogOut, ChevronDown, Home, Code, Briefcase, FileText, HelpCircle, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,28 +7,172 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import JobPostingDialog from "../dialog/jobposting-dialog";
 import ApplyJobDialog from "../dialog/applyjob-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-
+import { cn } from "@/lib/utils";
 
 const Header = () => {
-
   const { user, logout, isAuthenticated } = useAuth();
-
   const router = useRouter();
   const programs = useAppSelector(state => state.programs.items);
   const [showJobPosting, setShowJobPosting] = useState(false);
   const [showApplyJob, setShowApplyJob] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const handleJobPosting = () => {
     setShowJobPosting(true);
-  }
-  const handleApplyJob = () => {
-    setShowApplyJob(true);
+    setMobileMenuOpen(false);
   }
 
+  const handleApplyJob = () => {
+    setShowApplyJob(true);
+    setMobileMenuOpen(false);
+  }
+
+  const navItems = [
+    { label: "Codes", icon: <Code className="h-4 w-4 mr-2" />, onClick: () => router.push('/codes') },
+    { label: "Jobs", icon: <Briefcase className="h-4 w-4 mr-2" />, onClick: () => router.push('/jobs') },
+    { label: "Post Job", icon: <FileText className="h-4 w-4 mr-2" />, onClick: handleJobPosting },
+    { label: "Apply Job", icon: <FileText className="h-4 w-4 mr-2" />, onClick: handleApplyJob },
+    { label: "Quiz", icon: <HelpCircle className="h-4 w-4 mr-2" />, onClick: () => router.push('/quiz') },
+    { label: "Contact Us", icon: <Mail className="h-4 w-4 mr-2" />, onClick: () => router.push('/connect') },
+  ];
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 w-full h-12 bg-[#0284DA] grid grid-cols-12">
+    <>
+      <div className="fixed top-0 left-0 right-0 z-50 w-full h-12 bg-[#0284DA]">
+        <div className="mx-auto h-full w-full px-4">
+          <div className="flex items-center justify-between h-full">
+            {/* Logo - Left aligned */}
+            <div className="flex-shrink-0">
+              <div
+                className="flex items-center hover:cursor-pointer"
+                onClick={() => router.push('/')}
+              >
+                <h1 className="text-[#f2d898] text-xl sm:text-3xl font-bold">&lt;Be&gt;</h1>
+                <h1 className="text-[#7ad1f4] text-xl sm:text-2xl md:text-3xl font-bold">Copy</h1>
+              </div>
+            </div>
+
+            {/* Navigation - Center aligned, only visible on lg screens */}
+            <div className="hidden lg:flex items-center justify-center flex-grow mx-4">
+              <div className="flex items-center space-x-1">
+                {navItems.map((item, index) => (
+                  <Button
+                    key={index}
+                    className="text-lg bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold"
+                    onClick={item.onClick}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Stats and User Profile - Right aligned */}
+            <div className="flex items-center justify-end">
+              {/* Stats - Only visible on medium screens and up */}
+              <div className="flex items-center space-x-2 text-white mr-2">
+                <p className="text-[#ffd633] flex items-center text-sm sm:text-md md:text-lg">
+                  <Dot className="w-3 h-3" />
+                  <span>100% Free</span>
+                </p>
+                <p className="text-[#00ff55] flex items-center text-sm sm:text-md md:text-lg">
+                  <Check className="w-3 h-3" />
+                  <span>{programs?.length || 0} Codes</span>
+                </p>
+                <p className="hidden md:flex text-[#ffd633] flex items-center text-sm sm:text-md md:text-lg">
+                  <Dot className="w-3 h-3" />
+                  <span>350 Live</span>
+                </p>
+              </div>
+
+              {/* User Avatar or Mobile Menu Toggle */}
+              {isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="bg-transparent border-none focus:outline-none focus:ring-0 focus:ring-offset-0">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-[#ff1493] text-white text-sm sm:text-md md:text-lg">
+                        {user?.name
+                          .split(' ')
+                          .map(word => word[0]?.toUpperCase())
+                          .join('')
+                        }
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="px-2 py-1.5 text-sm font-medium">
+                      {user?.name}
+                    </div>
+                    <DropdownMenuSeparator />
+
+                    {/* Mobile Navigation in Dropdown - Only visible on smaller screens */}
+                    <div className="lg:hidden">
+                      {navItems.map((item, index) => (
+                        <DropdownMenuItem key={index} onClick={item.onClick} className="cursor-pointer">
+                          {item.icon}
+                          {item.label}
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                    </div>
+
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-500">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
+                    className="text-white hover:bg-white/20"
+                    onClick={() => router.push('/auth')}
+                  >
+                    Login
+                  </Button>
+
+                  {/* Mobile menu button - Only visible on smaller screens */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="lg:hidden text-white hover:bg-white/20"
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  >
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Menu - Only visible when toggled */}
+      {!isAuthenticated && mobileMenuOpen && (
+        <div className="fixed top-12 left-0 right-0 z-40 bg-white shadow-lg lg:hidden">
+          <div className="py-2">
+            {navItems.map((item, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                className="w-full justify-start rounded-none text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  item.onClick();
+                  setMobileMenuOpen(false);
+                }}
+              >
+                {item.icon}
+                {item.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Dialogs */}
       <JobPostingDialog
         open={showJobPosting}
         onOpenChange={setShowJobPosting}
@@ -37,132 +182,8 @@ const Header = () => {
         open={showApplyJob}
         onOpenChange={setShowApplyJob}
       />
-      <div className="flex items-center sm:items-left text-2xl font-bold sm:text-3xl justify-start ps-2 sm:ps-4 col-span-4 sm:col-span-4">
-        <div
-          className="flex items-center hover:cursor-pointer"
-          onClick={() => router.push('/')}
-        >
-          <h1 className="text-[#f2d898]">&lt;Be&gt;</h1>
-          <h1 className="text-[#7ad1f4]">Copy</h1>
-        </div>
-      </div>
-      <div className="flex flex-wrap items-center justify-center space-x-2 col-span-6 sm:col-span-4">
-        <p className="text-[#ffd633] flex items-center sm:text-sm md:text-md lg:text-lg">
-          <Dot className="w-3 sm:w-8 h-3 sm:h-8" />
-          100% Free
-        </p>
-        <p className="text-[#00ff55] flex items-center  sm:text-sm md:text-md lg:text-lg">
-          <Check className="w-3 sm:w-6 h-3 sm:h-6 pe-0 sm:pe-2" />
-          {programs && programs.length}Codes
-        </p>
-        <p className="hidden lg:flex text-[#ffd633]  flex items-center  sm:text-sm md:text-md lg:text-lg">
-          <Dot className="w-3 sm:w-8 w-3 sm:h-8" />
-          350 Live
-        </p>
-
-      </div>
-      <div className="flex items-center justify-end text-white col-span-2 sm:col-span-4">
-        <div className="hidden lg:flex gap-2">
-          <Button
-            className="bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold text-lg"
-            onClick={() => { console.log("categories"); router.push('/categories'); }}>
-            Codes
-          </Button>
-          <Button
-            className="bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold text-lg"
-            onClick={handleJobPosting}
-          >
-            Post Job
-          </Button>
-          <Button
-            className="bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold text-lg"
-            onClick={handleApplyJob}
-          >
-            Apply Job
-          </Button>
-          <Button
-            onClick={() => { console.log("quiz"); router.push('/quiz'); }}
-            className="bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold text-lg"
-          >
-            Quiz
-          </Button>
-        </div>
-        <Twitter className="hidden sm:block w-10 h-10 pe-4" />
-        <div>
-          {
-            isAuthenticated &&
-            <DropdownMenu>
-              <DropdownMenuTrigger className="bg-transparent mr-4 border-none focus:outline-none focus:ring-0 focus:ring-offset-0">
-                <Avatar>
-                  <AvatarFallback className="bg-[#ff1493] text-white">
-                    {user?.name
-                      .split(' ')
-                      .map(word => word[0]?.toUpperCase())
-                      .join('')
-                    }
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="ring-0 focus-visible:ring-offset-4 focus-visible:ring-0 p-0 m-0">
-                <DropdownMenuItem className="md:hidden relative">
-                  <Button
-                    className="w-full h-full p-0 bg-transparent text-black hover:bg-transparent"
-                    onClick={() => router.push('/categories')}>
-                    Codes
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="md:hidden relative">
-                  <Button
-                    className="w-full h-full p-0 bg-transparent text-black hover:bg-transparent"
-                    onClick={handleJobPosting}
-                  >
-                    Post Job
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="md:hidden relative">
-                  <Button
-                    className="w-full h-full p-0 bg-transparent text-black hover:bg-transparent"
-                    onClick={handleApplyJob}
-                  >
-                    Apply Job
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="md:hidden relative">
-                  <Button
-                    onClick={() => router.push('/quiz')}
-                    className="w-full h-full p-0 bg-transparent text-black hover:bg-transparent"
-                  >
-                    Quiz
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="md:hidden relative" />
-                <DropdownMenuItem className="md:hidden relative">
-                  <Button className="w-full h-full p-0 bg-transparent text-black hover:bg-transparent">
-                    <Twitter className="h-4 w-4 mr-4" />Contact Us
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="md:hidden relative" />
-                <DropdownMenuItem>
-                  <Button onClick={logout} className="w-full h-full p-0 bg-transparent text-black hover:bg-transparent">
-                    <LogOut className="h-4 w-4 mr-4" />
-                    Log out
-                  </Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          }
-        </div>
-
-        {/* <Button
-          size="icon"
-          className="xl:hidden text-white ml-2 outline-hidden bg-transparent hover:bg-transparent hover:text-white items-center"
-          onClick={toggleSidebar}
-        >
-          <Menu className="h-6 w-6" />
-        </Button> */}
-      </div>
-    </div>
-  )
+    </>
+  );
 }
 
 export default Header;

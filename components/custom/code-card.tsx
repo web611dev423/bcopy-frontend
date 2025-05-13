@@ -114,14 +114,14 @@ const CodeCard = ({ code, language, title, showDialog, clickFunc, isDashboard, c
       </CardContent>
       <CardFooter className={`${isDashboard ? "bg-[#202938]" : "bg-white"} min-h-[50px] p-2 sm:p-4 border-t border-[#c8c8c8] relative flex items-center rounded-lg `}>
         {!isDashboard && (
-          <div className="grid grid-cols-3 text-gray-800 text-md gap-1">
-            <div className="col-span-1 w-fit-content flex items-center" >
+          <div className="grid grid-cols-3 text-gray-800 text-sm/4 font-medium gap-1">
+            <div className="col-span-1 flex items-center gap-1">
               <Eye className="w-4 h-4" />{viewedNumber}
             </div>
-            <div className="col-span-1 w-fit-content flex items-center">
+            <div className="col-span-1 flex items-center gap-1">
               <Copy className="w-4 h-4" />{copiedNumber}
             </div>
-            <div className="col-span-1 w-fit-content flex items-center">
+            <div className="col-span-1 flex items-center gap-1">
               <ExternalLink className="w-4 h-4" />{sharedNumber}
             </div>
           </div>

@@ -5,7 +5,7 @@ import { fetchJobs } from "@/store/reducers/jobSlice";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-
+import { useRouter } from "next/navigation";
 interface ArticlesProps {
   onShowJobPosting: () => void;
   onShowApplyJob: () => void;
@@ -17,6 +17,7 @@ const Articles = ({ onShowJobPosting, onShowApplyJob }: ArticlesProps) => {
   useEffect(() => {
     dispatch(fetchJobs());
   }, [dispatch]);
+  const router = useRouter();
   const { items, loading, error } = useAppSelector((state) => state.jobs);
   return (
     <div className="bg-blue-50 p-4 rounded-lg">
@@ -37,7 +38,7 @@ const Articles = ({ onShowJobPosting, onShowApplyJob }: ArticlesProps) => {
           <Button onClick={onShowApplyJob} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Apply</Button>
           : <Button onClick={onShowJobPosting} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Post Job</Button>
         } */}
-        <Button onClick={onShowApplyJob} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Browse Jobs</Button>
+        <Button onClick={() => router.push('/jobs')} className="w-full mt-4 bg-[#0284DA] hover:bg-[#0284FF] text-white">Browse Jobs</Button>
       </div>
     </div>
   );
