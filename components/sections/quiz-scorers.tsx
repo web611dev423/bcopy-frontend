@@ -15,14 +15,15 @@ const QuizScorers = () => {
   const { scorers, loading } = useAppSelector(state => state.quizzes);
   const [selectedCountry, setSelectedCountry] = useState("all");
   const router = useRouter();
+  useEffect(() => {
+    dispatch(fetchQuizScorerList());
+  }, [dispatch]);
   // For horizontal scrolling
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0 });
 
-  useEffect(() => {
-    dispatch(fetchQuizScorerList());
-  }, [dispatch]);
+
   useEffect(() => {
     if (isAuthenticated && user?.country) {
       setSelectedCountry(user.country);
@@ -30,7 +31,18 @@ const QuizScorers = () => {
       setSelectedCountry('all');
     }
   }, [isAuthenticated, user]);
+  const countries = useMemo(() =>
+    ["all", ...Array.from(new Set(scorers.map(c => c.country)))],
+    [scorers]
+  );
 
+  // Filter contributors based on selected country
+  const filteredScorers = useMemo(() =>
+    selectedCountry === "all"
+      ? scorers
+      : scorers.filter(c => c.country === selectedCountry),
+    [scorers, selectedCountry]
+  );
   useEffect(() => {
     const updateConstraints = () => {
       if (containerRef.current && scrollRef.current) {
@@ -48,22 +60,9 @@ const QuizScorers = () => {
     return () => window.removeEventListener('resize', updateConstraints);
   }, [scorers.length]);
 
-  // Get unique countries from scorers
-  const countries = ["all", ...Array.from(new Set(
-    scorers
-      ?.filter(scorer => scorer.country)
-      .map(scorer => scorer.country)
-  ))];
 
-  // Filter contributors based on selected country
-  const filteredScorers = useMemo(() =>
-    selectedCountry === "all"
-      ? scorers
-      : scorers.filter(c => c.country === selectedCountry),
-    [scorers, selectedCountry]
-  );
   if (loading) return (
-    <div className="flex justify-center items-center h-64">
+    <div className="flex justify-center items-center h-16">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>)
   return (

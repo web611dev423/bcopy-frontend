@@ -64,7 +64,7 @@ const Contributors = () => {
   }, [filteredContributors.length]); // Only depend on length changes
 
   if (loading) return (
-    <div className="flex justify-center items-center h-64">
+    <div className="flex justify-center items-center h-16">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>)
   if (error) return <div>Error: {error}</div>;
@@ -102,7 +102,7 @@ const Contributors = () => {
           className="flex space-x-4 cursor-grab active:cursor-grabbing"
         >
           <div ref={scrollRef} className="flex gap-2 min-w-max">
-            {filteredContributors.map((contributor) => (
+            {filteredContributors.length > 0 ? (filteredContributors.map((contributor) => (
               <ProfileCard
                 key={contributor._id}
                 title={contributor.name}
@@ -110,7 +110,11 @@ const Contributors = () => {
                 country={contributor.country}
                 image={""}
               />
-            ))}
+            ))) : (
+              <div className="flex items-center justify-center w-full py-4 text-gray-500">
+                No contributors found
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

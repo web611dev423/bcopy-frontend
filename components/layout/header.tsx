@@ -88,7 +88,7 @@ const Header = () => {
               </div>
 
               {/* User Avatar or Mobile Menu Toggle */}
-              {isAuthenticated ? (
+              {isAuthenticated &&
                 <DropdownMenu>
                   <DropdownMenuTrigger className="bg-transparent border-none focus:outline-none focus:ring-0 focus:ring-offset-0">
                     <Avatar className="h-10 w-10">
@@ -124,27 +124,28 @@ const Header = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="ghost"
-                    className="text-white hover:bg-white/20"
-                    onClick={() => router.push('/auth')}
-                  >
-                    Login
-                  </Button>
+                // ) : (
+                //   <div className="flex items-center space-x-2">
+                //     <Button
+                //       variant="ghost"
+                //       className="text-white hover:bg-white/20"
+                //       onClick={() => router.push('/auth')}
+                //     >
+                //       Login
+                //     </Button>
 
-                  {/* Mobile menu button - Only visible on smaller screens */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="lg:hidden text-white hover:bg-white/20"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  >
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </div>
-              )}
+                //     {/* Mobile menu button - Only visible on smaller screens */}
+                //     <Button
+                //       variant="ghost"
+                //       size="icon"
+                //       className="lg:hidden text-white hover:bg-white/20"
+                //       onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                //     >
+                //       <Menu className="h-5 w-5" />
+                //     </Button>
+                //   </div>
+                // )
+              }
             </div>
           </div>
         </div>

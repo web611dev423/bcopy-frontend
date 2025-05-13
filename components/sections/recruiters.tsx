@@ -60,7 +60,7 @@ const Recruiters = () => {
     dispatch(fetchRecruiters());
   }, [dispatch]);
   if (loading) return (
-    <div className="flex justify-center items-center h-64">
+    <div className="flex justify-center items-center h-16">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>)
   if (error) return <div>Error: {error}</div>;
@@ -96,7 +96,7 @@ const Recruiters = () => {
           dragMomentum={false}
           className="flex space-x-4 cursor-grab active:cursor-grabbing">
           <div ref={scrollRef} className="flex gap-2 min-w-max">
-            {filteredRecruiters.map((recruiter) => (
+            {filteredRecruiters.length > 0 ? (filteredRecruiters.map((recruiter) => (
               <ProfileCard
                 key={recruiter._id}
                 title={recruiter.companyName}
@@ -104,7 +104,11 @@ const Recruiters = () => {
                 country={recruiter.country}
                 image={""}
               />
-            ))}
+            ))) : (
+              <div className="flex items-center justify-center w-full py-4 text-gray-500">
+                No recruiters found
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
