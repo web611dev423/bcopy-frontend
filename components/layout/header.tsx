@@ -42,25 +42,25 @@ const Header = () => {
     <>
       <div className="fixed top-0 left-0 right-0 z-50 w-full h-12 bg-[#0284DA]">
         <div className="mx-auto h-full w-full px-4">
-          <div className="flex items-center justify-between h-full">
-            {/* Logo - Left aligned */}
-            <div className="flex-shrink-0">
+          <div className="flex items-center h-full">
+            {/* Logo - Fixed width on the left */}
+            <div className="w-[120px] flex-shrink-0">
               <div
                 className="flex items-center hover:cursor-pointer"
                 onClick={() => router.push('/')}
               >
-                <h1 className="text-[#f2d898] text-xl sm:text-3xl font-bold">&lt;Be&gt;</h1>
+                <h1 className="text-[#f2d898] text-xl sm:text-2xl md:text-3xl font-bold">&lt;Be&gt;</h1>
                 <h1 className="text-[#7ad1f4] text-xl sm:text-2xl md:text-3xl font-bold">Copy</h1>
               </div>
             </div>
 
-            {/* Navigation - Center aligned, only visible on lg screens */}
-            <div className="hidden lg:flex items-center justify-center flex-grow mx-4">
-              <div className="flex items-center space-x-1">
+            {/* Navigation - Always centered */}
+            <div className="flex-grow flex justify-center">
+              <div className="hidden lg:flex items-center space-x-1">
                 {navItems.map((item, index) => (
                   <Button
                     key={index}
-                    className="text-lg bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold"
+                    className="bg-transparent hover:bg-white/20 text-[#7ad1f4] hover:text-white font-bold text-lg"
                     onClick={item.onClick}
                   >
                     {item.label}
@@ -69,21 +69,21 @@ const Header = () => {
               </div>
             </div>
 
-            {/* Stats and User Profile - Right aligned */}
-            <div className="flex items-center justify-end">
+            {/* Stats and User Profile - Fixed width on the right */}
+            <div className="w-[120px] flex-shrink-0 flex items-center justify-end">
               {/* Stats - Only visible on medium screens and up */}
               <div className="flex items-center space-x-2 text-white mr-2">
-                <p className="text-[#ffd633] flex items-center text-sm sm:text-md md:text-lg">
-                  <Dot className="w-3 h-3" />
-                  <span>100% Free</span>
+                <p className="text-[#ffd633] flex items-center text-md whitespace-nowrap">
+                  <Dot className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">100% Free</span>
                 </p>
-                <p className="text-[#00ff55] flex items-center text-sm sm:text-md md:text-lg">
-                  <Check className="w-3 h-3" />
-                  <span>{programs?.length || 0} Codes</span>
+                <p className="text-[#00ff55] flex items-center text-md whitespace-nowrap">
+                  <Check className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">{programs?.length || 0} Codes</span>
                 </p>
-                <p className="hidden md:flex text-[#ffd633] flex items-center text-sm sm:text-md md:text-lg">
-                  <Dot className="w-3 h-3" />
-                  <span>350 Live</span>
+                <p className="hidden md:flex text-[#ffd633] items-center text-md whitespace-nowrap">
+                  <Dot className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">350 Live</span>
                 </p>
               </div>
 
@@ -92,7 +92,7 @@ const Header = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger className="bg-transparent border-none focus:outline-none focus:ring-0 focus:ring-offset-0">
                     <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-[#ff1493] text-white text-sm sm:text-md md:text-lg">
+                      <AvatarFallback className="bg-[#ff1493] text-white text-md">
                         {user?.name
                           .split(' ')
                           .map(word => word[0]?.toUpperCase())

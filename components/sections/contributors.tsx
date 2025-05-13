@@ -64,7 +64,7 @@ const Contributors = () => {
   }, [filteredContributors.length]); // Only depend on length changes
 
   if (loading) return (
-    <div className="flex justify-center items-center h-16">
+    <div className="flex justify-center items-center h-24">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>)
   if (error) return <div>Error: {error}</div>;
